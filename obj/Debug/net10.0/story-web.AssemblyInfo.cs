@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("story-web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+adc99396a0abbb646da967b59911b063df1ac558")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7b67e3fd6e07d1ca291414585ac6339a929f72f3")]
 [assembly: System.Reflection.AssemblyProductAttribute("story-web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("story-web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
