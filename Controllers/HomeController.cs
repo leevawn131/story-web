@@ -19,11 +19,11 @@ public class HomeController : Controller
     {
         return View();
     }
-    public IActionResult Contact()
+    public IActionResult Story()
     {
         return View();
     }
-    public IActionResult Single()
+    public IActionResult Chapter()
     {
         return View();
     }

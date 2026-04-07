@@ -40,7 +40,7 @@
         <!-- place navbar here -->
         <nav class="navbar navbar-expand-lg navbar-dark header__navbar p-md-0">
             <div class="container">
-                <a class="navbar-brand" href="index.html">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
                     <img src="~/assets/images/logo_text.png" alt="Logo Suu Truyen" srcset="" class="img-fluid"
                         style="width: 200px;">
                 </a>
@@ -57,34 +57,34 @@
                                 Thể loại
                             </a>
                             <ul class="dropdown-menu dropdown-menu-custom">
-                                <li><a class="dropdown-item" href="category.html">Ngôn
+                                <li><a class="dropdown-item" asp-controller="Home" asp-action="Category">Ngôn
                                         Tình</a>
                                 </li>
-                                <li><a class="dropdown-item" href="category.html">Trọng
+                                <li><a class="dropdown-item" asp-controller="Home" asp-action="Category">Trọng
                                         Sinh</a>
                                 </li>
-                                <li><a class="dropdown-item" href="category.html">Cổ Đại</a>
+                                <li><a class="dropdown-item" asp-controller="Home" asp-action="Category">Cổ Đại</a>
                                 </li>
-                                <li><a class="dropdown-item" href="category.html">Tiên
+                                <li><a class="dropdown-item" asp-controller="Home" asp-action="Category">Tiên
                                         Hiệp</a>
                                 </li>
-                                <li><a class="dropdown-item" href="category.html">Ngược</a>
+                                <li><a class="dropdown-item" asp-controller="Home" asp-action="Category">Ngược</a>
                                 </li>
-                                <li><a class="dropdown-item" href="category.html">Khác</a>
+                                <li><a class="dropdown-item" asp-controller="Home" asp-action="Category">Khác</a>
                                 </li>
-                                <li><a class="dropdown-item" href="category.html">Dị Giới</a>
+                                <li><a class="dropdown-item" asp-controller="Home" asp-action="Category">Dị Giới</a>
                                 </li>
-                                <li><a class="dropdown-item" href="category.html">Huyền
+                                <li><a class="dropdown-item" asp-controller="Home" asp-action="Category">Huyền
                                         Huyễn</a>
                                 </li>
-                                <li><a class="dropdown-item" href="category.html">Xuyên
+                                <li><a class="dropdown-item" asp-controller="Home" asp-action="Category">Xuyên
                                         Không</a>
                                 </li>
-                                <li><a class="dropdown-item" href="category.html">Sủng</a>
+                                <li><a class="dropdown-item" asp-controller="Home" asp-action="Category">Sủng</a>
                                 </li>
-                                <li><a class="dropdown-item" href="category.html">Cung Đấu</a>
+                                <li><a class="dropdown-item" asp-controller="Home" asp-action="Category">Cung Đấu</a>
                                 </li>
-                                <li><a class="dropdown-item" href="category.html">Gia Đấu</a>
+                                <li><a class="dropdown-item" asp-controller="Home" asp-action="Category">Gia Đấu</a>
                                 </li>
                             </ul>
                         </li>
@@ -157,6 +157,7 @@
 
                         </button>
                     </form>
+                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
@@ -165,7 +166,7 @@
     <div class="header-mobile d-sm-block d-lg-none">
         <nav class="navbar navbar-dark bg-dark">
             <div class="container-fluid">
-                <a class="navbar-brand" href="index.html">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
                     <img src="~/assets/images/logo_text.png" alt="Logo Suu Truyen" srcset="" class="img-fluid"
                         style="width: 200px;">
                 </a>
@@ -383,7 +384,7 @@
     </div>
 
 
-
+@RenderSection("Scripts", required: false)
 </body>
 
 </html>
