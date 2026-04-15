@@ -1,0 +1,125 @@
+sonct@vinhuni.edu.vn 
+1 
+ 
+PRACTICE #10: WEB PROGRAMMING 
+Lesson: Register, Login and Logout pages 
+ 
+Objectives: 
+- Integrating Register, Login and Logout pages into project. 
+Preparation: 
+ 
+- Practice #9 
+Content: 
+- Create a register, a login and a logout pages; 
+ 
+A. Preparation 
+1. Create a table named AdminUser in the database aznews of SQL Server 
+ 
+2. Add a model named AdminUser.cs in the folder Admin/Models as follows 
+ 
+sonct@vinhuni.edu.vn 
+2 
+ 
+- Add the following code for AdminUser.cs 
+ 
+3. Add followng line to DataContext.cs 
+ 
+sonct@vinhuni.edu.vn 
+3 
+ 
+4. Add two following functions into Functions.cs in the folder Utilities 
+ 
+NOTE: Lines from 11-14 in the file Functions.cs are used for the purpose of saving 
+login information. During the running process, if this information is not found, the system 
+will ask you to login. 
+ 
+ 
+sonct@vinhuni.edu.vn 
+4 
+ 
+B. Register page 
+1. Create a controller named RegisterController.cs in Admin/Controllers as follows 
+ 
+2. Create a folder named Register in Admin/Views, add a view named Index.cshtml 
+ 
+sonct@vinhuni.edu.vn 
+5 
+ 
+- Copy all content in the file pages-register.html of the template NiceAdmin and 
+paste into the file Index.cshtml. Then, modify the content as follows: 
+ 
+sonct@vinhuni.edu.vn 
+6 
+ 
+ 
+sonct@vinhuni.edu.vn 
+7 
+ 
+3. Run to check how to add an user into the database 
+ 
+Check the following information in the table AdminUser in SQL Server 
+ 
+ 
+ 
+B. Login page 
+1. Create LoginController.cs in the folder Admin/Controllers as follows 
+ 
+sonct@vinhuni.edu.vn 
+8 
+ 
+- Add the following content to LoginController.cs 
+ 
+2. Add a view folder named Login in Admin/Views 
+- Add a file named Index.cshtml in the folder Login, copy all from pages-login.html 
+in the template NiceAdmin and paste into Index.cshtml in the folder Login 
+ 
+sonct@vinhuni.edu.vn 
+9 
+ 
+ 
+sonct@vinhuni.edu.vn 
+10 
+ 
+ 
+Run …../Admin/Login to check the result. 
+ 
+sonct@vinhuni.edu.vn 
+11 
+ 
+3. Check login status for all pages in Admin 
+ - Add the folowing function in the file Functions.cs in the folder Utilities 
+ 
+4. Add the folowing line in every action of Controllers in the folder Admin in order to 
+check If the user is not logged in, the system will automatically return to the login page 
+(Except for the 2 Register and Login controllers). 
+ 
+- Do the same for the other controllers such as: MenuController, PostController,… 
+Run …../Admin to check the result. 
+ 
+ 
+sonct@vinhuni.edu.vn 
+12 
+ 
+C. Logout action 
+- Logging out of the system only requires setting the static variables Functions._UserID, 
+Functions._UserName, Functions._Email,... to the default value. 
+- Add the following action to HomeController.cs in the folder Admin/Controllers 
+ 
+- In the file _LayoutAdmin.cshtml of Admin\Views\Shared, find the code Sign Out 
+ 
+sonct@vinhuni.edu.vn 
+13 
+ 
+ 
+- Add the following line into _LayoutAdmin.cs 
+ 
+- Find some lines in _LayoutAdmin.cs as follows 
+ 
+- Modify as follows 
+ 
+sonct@vinhuni.edu.vn 
+14 
+ 
+ 
+- After running project and loging in, you can see as follows: 
+ 

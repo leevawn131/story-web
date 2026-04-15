@@ -1,0 +1,32 @@
+@using story_web.Models
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+@model List<Story>
+
+<h2>Quản lý truyện</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tên truyện</th>
+            <th>Tác giả</th>
+            <th>Trạng thái</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var s in Model)
+        {
+            <tr>
+                <td>@s.StoryName</td>
+                <td>@s.Author?.PenName</td>
+                <td>@s.PostStatus</td>
+                <td>
+                    <a href="/Admin/Stories/Approve/@s.id_Story">✔️</a>
+                    <a href="/Admin/Stories/Reject/@s.id_Story">❌</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
