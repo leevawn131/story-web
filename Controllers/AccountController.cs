@@ -109,12 +109,6 @@ public class AccountController : Controller
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
 
-        _context.Authors.Add(new Author
-        {
-            id_User = user.id_User,
-            PenName = user.UserName
-        });
-
         await AddNotificationAsync(user.id_User, "Your account is ready. Start reading stories or publish your own.");
         await _context.SaveChangesAsync();
 
@@ -209,7 +203,6 @@ public class AccountController : Controller
         user.Email = model.Email;
         user.ModifiedAt = DateTime.UtcNow;
 
-        await EnsureAuthorProfileAsync(user.id_User, model.PenName ?? model.UserName);
         await AddNotificationAsync(user.id_User, "Your profile information was updated.");
         await _context.SaveChangesAsync();
 
@@ -369,23 +362,6 @@ public class AccountController : Controller
             PostedStories = postedStories,
             Notifications = notifications
         };
-    }
-
-    private async Task EnsureAuthorProfileAsync(int userId, string penName)
-    {
-        var author = await _context.Authors.FirstOrDefaultAsync(item => item.id_User == userId);
-        if (author is null)
-        {
-            _context.Authors.Add(new Author
-            {
-                id_User = userId,
-                PenName = penName
-            });
-
-            return;
-        }
-
-        author.PenName = penName;
     }
 
     private Task AddNotificationAsync(int userId, string content)

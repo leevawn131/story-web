@@ -17,11 +17,11 @@ public class StoriesController : Controller
         _context = context;
     }
 
-    public IActionResult Index(string? status = "cho_duyet")
+    public IActionResult Index(string? status = null)
     {
         var query = _context.Stories.Include(s => s.Author).AsQueryable();
-        
-        if (!string.IsNullOrEmpty(status))
+
+        if (status == "cho_duyet" || status == "da_duyet" || status == "tu_choi")
         {
             query = query.Where(s => s.PostStatus == status);
         }

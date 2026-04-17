@@ -105,7 +105,7 @@ public class WriterController : Controller
         }
 
         author.PenName = normalizedPenName;
-        author.Bio = string.IsNullOrWhiteSpace(model.Bio) ? null : model.Bio.Trim();
+        author.Bio = string.IsNullOrWhiteSpace(model.Bio) ? string.Empty : model.Bio.Trim();
         author.Avatar = string.IsNullOrWhiteSpace(model.Avatar) ? null : model.Avatar.Trim();
 
         await _context.SaveChangesAsync();
@@ -605,7 +605,9 @@ public class WriterController : Controller
     private async Task<bool> HasRegisteredAuthorAsync()
     {
         var author = await GetCurrentAuthorAsync();
-        return author is not null && !string.IsNullOrWhiteSpace(author.PenName);
+        return author is not null
+            && !string.IsNullOrWhiteSpace(author.PenName)
+            && author.Bio is not null;
     }
 
     private async Task<Author?> GetCurrentAuthorAsync()
