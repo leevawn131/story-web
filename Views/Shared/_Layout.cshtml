@@ -1,3 +1,8 @@
+@{
+    var isAuthenticated = Context.Session.IsAuthenticated();
+    var currentUserName = Context.Session.GetCurrentUserName();
+    var currentUserRole = Context.Session.GetCurrentUserRole();
+}
 <!DOCTYPE html>
 <!-- saved from url=(0021)https://suustore.com/ -->
 <html lang="en">
@@ -54,7 +59,8 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">
-                                Thể loại
+                                Thể loại 
+                                
                             </a>
                             <ul class="dropdown-menu dropdown-menu-custom">
                                 <li><a class="dropdown-item" asp-controller="Home" asp-action="Category">Ngôn
@@ -110,6 +116,44 @@
                         </li>
                     </ul>
 
+                    <div class="d-flex align-items-center gap-2 me-3 mb-3 mb-lg-0">
+                        @if (isAuthenticated)
+                        {
+                            <a asp-controller="Account"
+                               asp-action="Profile"
+                               class="btn btn-outline-light btn-sm">
+                                @(currentUserName ?? "Profile")
+                            </a>
+                            <a asp-controller="Library"
+                               asp-action="History"
+                               class="btn btn-outline-light btn-sm">
+                                My Library
+                            </a>
+                            <a asp-controller="Writer"
+                               asp-action="Stories"
+                               class="btn btn-light btn-sm">
+                                My Stories
+                            </a>
+                            @if (currentUserRole == UserRoles.Admin)
+                            {
+                                <a asp-area="Admin"
+                                   asp-controller="Home"
+                                   asp-action="Index"
+                                   class="btn btn-warning btn-sm">
+                                    Admin
+                                </a>
+                            }
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-light btn-sm">Logout</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-light btn-sm">Login</a>
+                            <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-sm">Register</a>
+                        }
+                    </div>
+
                     <div class="form-check form-switch me-3 d-flex align-items-center">
                         <label class="form-check-label">
                             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
@@ -132,8 +176,8 @@
                         </label>
                     </div>
 
-                    <form class="d-flex header__form-search" action="" method="GET">
-                        <input class="form-control search-story" type="text" placeholder="Tìm kiếm" name="key_word"
+                    <form class="d-flex header__form-search" asp-controller="Home" asp-action="Index" method="get">
+                        <input class="form-control search-story" type="text" placeholder="Tìm kiếm" name="searchTerm"
                             value="">
                         <div class="col-12 search-result shadow no-result d-none">
                             <div class="card text-white bg-light">
@@ -205,6 +249,44 @@
                             </li>
                         </ul>
 
+                        <div class="d-grid gap-2 mb-4">
+                            @if (isAuthenticated)
+                            {
+                                <a asp-controller="Account"
+                                   asp-action="Profile"
+                                   class="btn btn-outline-light">
+                                    @(currentUserName ?? "Profile")
+                                </a>
+                                <a asp-controller="Library"
+                                   asp-action="History"
+                                   class="btn btn-outline-light">
+                                    My Library
+                                </a>
+                                <a asp-controller="Writer"
+                                   asp-action="Stories"
+                                   class="btn btn-light">
+                                    My Stories
+                                </a>
+                                @if (currentUserRole == UserRoles.Admin)
+                                {
+                                    <a asp-area="Admin"
+                                       asp-controller="Home"
+                                       asp-action="Index"
+                                       class="btn btn-warning">
+                                        Admin Dashboard
+                                    </a>
+                                }
+                                <form asp-controller="Account" asp-action="Logout" method="post">
+                                    <button type="submit" class="btn btn-light w-100">Logout</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <a asp-controller="Account" asp-action="Login" class="btn btn-outline-light">Login</a>
+                                <a asp-controller="Account" asp-action="Register" class="btn btn-light">Register</a>
+                            }
+                        </div>
+
                         <div class="form-check form-switch d-flex align-items-center mb-3 p-0">
                             <label class="form-check-label">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
@@ -227,8 +309,8 @@
                             </label>
                         </div>
 
-                        <form class="d-flex header__form-search" action="" method="GET">
-                            <input class="form-control search-story" type="text" placeholder="Tìm kiếm" name="key_word"
+                        <form class="d-flex header__form-search" asp-controller="Home" asp-action="Index" method="get">
+                            <input class="form-control search-story" type="text" placeholder="Tìm kiếm" name="searchTerm"
                                 value="">
                             <div class="col-12 search-result shadow no-result d-none">
                                 <div class="card text-white bg-light">

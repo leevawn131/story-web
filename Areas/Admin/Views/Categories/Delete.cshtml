@@ -1,0 +1,15 @@
+@model story_web.Models.Category
+
+<h2>Xác nhận xoá</h2>
+
+<p>Bạn có chắc muốn xoá thể loại này không?</p>
+
+<div>
+    <strong>@Model.CategoryName</strong>
+</div>
+
+<form method="post">
+    <input type="hidden" asp-for="id_Category" />
+    <button class="btn btn-danger">Xoá</button>
+    <a asp-action="Index" class="btn btn-secondary">Huỷ</a>
+</form>

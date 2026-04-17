@@ -1,32 +1,71 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using story_web.Data;
+using story_web.Filters;
 using story_web.Models;
 
-namespace story_web.Areas.Admin.Controllers
+namespace story_web.Areas.Admin.Controllers;
+
+[Area("Admin")]
+[Auth(UserRoles.Admin)]
+public class StoriesController : Controller
 {
-    [Area("Admin")]
-    public class StoriesController : Controller
+    private readonly AppDbContext _context;
+
+    public StoriesController(AppDbContext context)
     {
-        private readonly AppDbContext _context;
+        _context = context;
+    }
 
-        public StoriesController(AppDbContext context)
+    public IActionResult Index(string? status = "cho_duyet")
+    {
+        var query = _context.Stories.Include(s => s.Author).AsQueryable();
+        
+        if (!string.IsNullOrEmpty(status))
         {
-            _context = context;
+            query = query.Where(s => s.PostStatus == status);
         }
 
-        public IActionResult Index()
-        {
-            var stories = _context.Stories
-            .Include(s => s.Author)
+        var stories = query
+            .OrderByDescending(s => s.Posted_At)
             .ToList();
-            return View(stories);
-        }
+
+        ViewData["CurrentStatus"] = status;
+        return View(stories);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Approve(int id)
+    {
+        var story = await _context.Stories.FindAsync(id);
+        if (story is null)
+            return NotFound();
+
+        story.PostStatus = "da_duyet";
+        story.Modified_At = DateTime.UtcNow;
+        
+        _context.Stories.Update(story);
+        await _context.SaveChangesAsync();
+
+        TempData["SuccessMessage"] = $"Story '{story.StoryName}' has been approved.";
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Reject(int id, string? reason = null)
+    {
+        var story = await _context.Stories.FindAsync(id);
+        if (story is null)
+            return NotFound();
+
+        story.PostStatus = "tu_choi";
+        story.Reject_Reason = reason;
+        story.Modified_At = DateTime.UtcNow;
+        
+        _context.Stories.Update(story);
+        await _context.SaveChangesAsync();
+
+        TempData["SuccessMessage"] = $"Story '{story.StoryName}' has been rejected.";
+        return RedirectToAction(nameof(Index));
     }
 }

@@ -1,0 +1,70 @@
+@model IReadOnlyList<WriterStoryListItemViewModel>
+
+<main class="py-5">
+    <div class="container">
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+            <div>
+                <a asp-controller="Account" asp-action="Profile" class="text-decoration-none small">Back to profile</a>
+                <h1 class="h2 mt-2 mb-1">My stories</h1>
+                <p class="text-muted mb-0">Create, edit, and organize the stories you publish.</p>
+            </div>
+            <a asp-action="CreateStory" class="btn btn-primary">Create story</a>
+        </div>
+
+        @if (TempData["SuccessMessage"] is string successMessage)
+        {
+            <div class="alert alert-success">@successMessage</div>
+        }
+
+        @if (TempData["InfoMessage"] is string infoMessage)
+        {
+            <div class="alert alert-info">@infoMessage</div>
+        }
+
+        @if (Model.Count == 0)
+        {
+            <div class="alert alert-light border">
+                You have not created any stories yet.
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive shadow-sm rounded">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Story</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Chapters</th>
+                            <th>Updated</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-semibold">@item.StoryName</td>
+                                <td>@(item.CategoryName ?? "Uncategorized")</td>
+                                <td>@(item.PostStatus ?? "Draft")</td>
+                                <td>@item.ChapterCount</td>
+                                <td>@(item.ModifiedAt?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? "N/A")</td>
+                                <td class="text-end">
+                                    <div class="d-flex flex-wrap justify-content-end gap-2">
+                                        <a asp-action="Chapters" asp-route-storyId="@item.StoryId" class="btn btn-outline-primary btn-sm">Chapters</a>
+                                        <a asp-action="EditStory" asp-route-id="@item.StoryId" class="btn btn-outline-secondary btn-sm">Edit</a>
+                                        <a asp-controller="Home" asp-action="Story" asp-route-id="@item.StoryId" class="btn btn-outline-dark btn-sm">View</a>
+                                        <form asp-action="DeleteStory" asp-route-id="@item.StoryId" method="post" class="d-inline" onsubmit="return confirm('Delete this story and all its chapters?');">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</main>

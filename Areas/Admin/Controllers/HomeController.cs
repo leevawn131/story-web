@@ -1,12 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using story_web.Filters;
+using story_web.Models;
 
 namespace story_web.Areas.Admin.Controllers;
 
 [Area("Admin")]
+[Auth(UserRoles.Admin)]
 public class HomeController : Controller
 {
     public IActionResult Index()

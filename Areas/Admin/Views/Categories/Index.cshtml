@@ -1,0 +1,30 @@
+@model List<story_web.Models.Category>
+
+<h2>Quản lý thể loại</h2>
+
+<a asp-area="Admin" asp-controller="Categories" asp-action="Create" class="btn btn-primary">+ Thêm</a>
+
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên</th>
+            <th>Mô tả</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.id_Category</td>
+                <td>@c.CategoryName</td>
+                <td>@c.Description</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@c.id_Category" class="btn btn-warning">Sửa</a>
+                    <a asp-action="Delete" asp-route-id="@c.id_Category" class="btn btn-danger">Xoá</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

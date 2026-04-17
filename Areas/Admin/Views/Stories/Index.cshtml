@@ -6,11 +6,17 @@
 
 <h2>Quản lý truyện</h2>
 
+@if (TempData["SuccessMessage"] is string message)
+{
+    <div class="alert alert-success">@message</div>
+}
+
 <table class="table">
     <thead>
         <tr>
             <th>Tên truyện</th>
             <th>Tác giả</th>
+            <th>Mô tả</th>
             <th>Trạng thái</th>
             <th>Action</th>
         </tr>
@@ -21,12 +27,61 @@
             <tr>
                 <td>@s.StoryName</td>
                 <td>@s.Author?.PenName</td>
-                <td>@s.PostStatus</td>
+                <td>@(s.Description?.Substring(0, Math.Min(50, s.Description.Length)) ?? "N/A")...</td>
                 <td>
-                    <a href="/Admin/Stories/Approve/@s.id_Story">✔️</a>
-                    <a href="/Admin/Stories/Reject/@s.id_Story">❌</a>
+                    @if (s.PostStatus == "cho_duyet")
+                    {
+                        <span class="badge bg-warning">Chờ duyệt</span>
+                    }
+                    else if (s.PostStatus == "da_duyet")
+                    {
+                        <span class="badge bg-success">Đang hiển thị</span>
+                    }
+                    else if (s.PostStatus == "tu_choi")
+                    {
+                        <span class="badge bg-danger">Từ chối</span>
+                    }
+                </td>
+                <td>
+                    @if (s.PostStatus == "cho_duyet")
+                    {
+                        <form method="post" asp-action="Approve" asp-route-id="@s.id_Story" style="display:inline;">
+                            <button type="submit" class="btn btn-success btn-sm">✔️ Duyệt</button>
+                        </form>
+                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#rejectModal@s.id_Story">❌ Từ chối</button>
+                    }
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+@* Reject modals for each story *@
+@foreach (var s in Model)
+{
+    @if (s.PostStatus == "cho_duyet")
+    {
+        <div class="modal fade" id="rejectModal@s.id_Story" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Từ chối: @s.StoryName</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form method="post" asp-action="Reject" asp-route-id="@s.id_Story">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="reason@s.id_Story" class="form-label">Lý do từ chối (tùy chọn)</label>
+                                <textarea class="form-control" id="reason@s.id_Story" name="reason" rows="4" placeholder="Nhập lý do từ chối..."></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-danger">Xác nhận từ chối</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+}

@@ -1,0 +1,98 @@
+@model WriterStoryManageViewModel
+@{
+    string FormatChapterNumber(decimal? number)
+    {
+        if (!number.HasValue)
+        {
+            return "?";
+        }
+
+        return decimal.Truncate(number.Value) == number.Value
+            ? decimal.ToInt32(number.Value).ToString()
+            : number.Value.ToString("0.##");
+    }
+}
+
+<main class="py-5">
+    <div class="container">
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+            <div>
+                <a asp-controller="Writer" asp-action="Stories" class="text-decoration-none small">Back to my stories</a>
+                <h1 class="h2 mt-2 mb-1">@Model.StoryName</h1>
+                <p class="text-muted mb-0">Status: @(Model.PostStatus ?? "Draft")</p>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                <a asp-action="CreateChapter" asp-route-storyId="@Model.StoryId" class="btn btn-primary">Add chapter</a>
+                <a asp-action="EditStory" asp-route-id="@Model.StoryId" class="btn btn-outline-secondary">Edit story</a>
+                <a asp-controller="Home" asp-action="Story" asp-route-id="@Model.StoryId" class="btn btn-outline-dark">View public page</a>
+            </div>
+        </div>
+
+        @if (TempData["SuccessMessage"] is string successMessage)
+        {
+            <div class="alert alert-success">@successMessage</div>
+        }
+
+        @if (Model.PostStatus == "cho_duyet")
+        {
+            <div class="alert alert-warning">
+                <strong>⏳ Awaiting Review:</strong> Your story has been submitted for admin review. Once approved, it will be published and visible to readers.
+            </div>
+        }
+        else if (Model.PostStatus == "da_duyet")
+        {
+            <div class="alert alert-success">
+                <strong>✅ Published:</strong> Your story has been approved and is now visible to readers.
+            </div>
+        }
+        else if (Model.PostStatus == "tu_choi")
+        {
+            <div class="alert alert-danger">
+                <strong>❌ Rejected:</strong> Your story was rejected.
+                @if (!string.IsNullOrEmpty(Model.RejectReason))
+                {
+                    <p class="mb-0 mt-2"><strong>Reason:</strong> @Model.RejectReason</p>
+                }
+            </div>
+        }
+
+        @if (Model.Chapters.Count == 0)
+        {
+            <div class="alert alert-light border">No chapters yet. Start by adding your first chapter.</div>
+        }
+        else
+        {
+            <div class="table-responsive shadow-sm rounded">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Number</th>
+                            <th>Title</th>
+                            <th>Updated</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var chapter in Model.Chapters)
+                        {
+                            <tr>
+                                <td>@FormatChapterNumber(chapter.ChapterNumber)</td>
+                                <td class="fw-semibold">@chapter.ChapterName</td>
+                                <td>@(chapter.PostedAt?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? "N/A")</td>
+                                <td class="text-end">
+                                    <div class="d-flex flex-wrap justify-content-end gap-2">
+                                        <a asp-controller="Home" asp-action="Chapter" asp-route-id="@chapter.ChapterId" class="btn btn-outline-dark btn-sm">Read</a>
+                                        <a asp-action="EditChapter" asp-route-id="@chapter.ChapterId" class="btn btn-outline-primary btn-sm">Edit</a>
+                                        <form asp-action="DeleteChapter" asp-route-id="@chapter.ChapterId" method="post" class="d-inline" onsubmit="return confirm('Delete this chapter?');">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</main>

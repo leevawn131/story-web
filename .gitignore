@@ -1,6 +1,8 @@
 # Build output
 bin/
 obj/
+.dotnet-cli/
+.aspnet/
 
 # User-specific files
 *.user

@@ -1,0 +1,39 @@
+@model WriterStoryEditorViewModel
+
+<main class="py-5">
+    <div class="container">
+        <div class="mb-4">
+            <a asp-controller="Writer" asp-action="Stories" class="text-decoration-none small">Back to my stories</a>
+            <h1 class="h2 mt-2 mb-1">@Model.Title</h1>
+            <p class="text-muted mb-0">Fill in the core story information before managing chapters.</p>
+        </div>
+
+        @if (TempData["InfoMessage"] is string infoMessage)
+        {
+            <div class="alert alert-info">@infoMessage</div>
+        }
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                @if (Model.Form.StoryId.HasValue)
+                {
+                    <form asp-action="EditStory" asp-route-id="@Model.Form.StoryId" method="post" enctype="multipart/form-data">
+                        <input asp-for="Form.StoryId" type="hidden" />
+                        <input asp-for="Form.CurrentImage" type="hidden" />
+                        @await Html.PartialAsync("_StoryFormFields", Model)
+                    </form>
+                }
+                else
+                {
+                    <form asp-action="CreateStory" method="post" enctype="multipart/form-data">
+                        @await Html.PartialAsync("_StoryFormFields", Model)
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
