@@ -135,15 +135,15 @@ public class NotificationsPageViewModel
 public class AuthorRegistrationViewModel
 {
     [Required]
-    [Display(Name = "Pen name")]
+    [Display(Name = "Bút danh")]
     [StringLength(100, MinimumLength = 2)]
     public string PenName { get; set; } = string.Empty;
 
-    [Display(Name = "Bio")]
+    [Display(Name = "Tiểu sử")]
     [StringLength(1000)]
     public string? Bio { get; set; }
 
-    [Display(Name = "Avatar URL")]
+    [Display(Name = "URL Đại diện")]
     [StringLength(255)]
     [Url]
     public string? Avatar { get; set; }
@@ -154,21 +154,21 @@ public class StoryFormViewModel
     public int? StoryId { get; set; }
 
     [Required]
-    [Display(Name = "Story name")]
+    [Display(Name = "Tên truyện")]
     [StringLength(200, MinimumLength = 2)]
     public string StoryName { get; set; } = string.Empty;
 
-    [Display(Name = "Category")]
+    [Display(Name = "Thể loại")]
     [Required]
     public int? CategoryId { get; set; }
 
-    [Display(Name = "Cover image")]
+    [Display(Name = "Bộ chữ truyện")]
     [DataType(DataType.Upload)]
     public IFormFile? ImageFile { get; set; }
 
     public string? CurrentImage { get; set; }
 
-    [Display(Name = "Story summary (shown on homepage)")]
+    [Display(Name = "Tóm tắt truyện (hiển thị trên trang chủ)")]
     [Required]
     [StringLength(4000, MinimumLength = 20)]
     public string? Description { get; set; }
@@ -207,16 +207,16 @@ public class ChapterFormViewModel
     public string StoryName { get; set; } = string.Empty;
 
     [Required]
-    [Display(Name = "Chapter number")]
+    [Display(Name = "Số chương")]
     public decimal? ChapterNumber { get; set; }
 
     [Required]
-    [Display(Name = "Chapter title")]
+    [Display(Name = "Tiêu đề chương")]
     [StringLength(250)]
     public string ChapterName { get; set; } = string.Empty;
 
     [Required]
-    [Display(Name = "Content")]
+    [Display(Name = "Nội dung")]
     public string Content { get; set; } = string.Empty;
 }
 

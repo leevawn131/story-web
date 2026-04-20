@@ -1,0 +1,46 @@
+@model List<story_web.Models.User>
+
+<h2>User Management</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var u in Model)
+        {
+            <tr>
+                <td>@u.id_User</td>
+                <td>@u.UserName</td>
+                <td>@u.Email</td>
+                <td>
+                    @if (u.Role == 1)
+                    {
+                        <span class="text-danger">Admin</span>
+                    }
+                    else
+                    {
+                        <span>User</span>
+                    }
+                </td>
+                <td>
+                    @if (u.Role != 1)
+                    {
+                        <a asp-action="Delete"
+                           asp-route-id="@u.id_User"
+                           class="btn btn-danger">
+                           Delete
+                        </a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

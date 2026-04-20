@@ -6,8 +6,8 @@
             <div class="col-12 col-md-8 col-lg-5">
                 <div class="card shadow-sm border-0">
                     <div class="card-body p-4 p-lg-5">
-                        <h1 class="h3 mb-2">Login</h1>
-                        <p class="text-muted mb-4">Sign in with your username and password.</p>
+                        <h1 class="h3 mb-2">Đăng nhập</h1>
+                        <p class="text-muted mb-4">Đăng nhập với tên đăng nhập và mật khẩu của bạn.</p>
 
                         @if (TempData["SuccessMessage"] is string successMessage)
                         {
@@ -31,12 +31,12 @@
                                 <span asp-validation-for="Password" class="text-danger"></span>
                             </div>
 
-                            <button type="submit" class="btn btn-primary w-100">Login</button>
+                            <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
                         </form>
 
                         <div class="d-flex justify-content-between align-items-center mt-4">
-                            <a asp-action="Register" class="text-decoration-none">Create account</a>
-                            <a asp-action="ForgotPassword" class="text-decoration-none">Forgot password?</a>
+                            <a asp-action="Register" class="text-decoration-none">Tạo tài khoản</a>
+                            <a asp-action="ForgotPassword" class="text-decoration-none">Quên mật khẩu?</a>
                         </div>
                     </div>
                 </div>

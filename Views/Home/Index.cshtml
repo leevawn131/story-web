@@ -5,13 +5,13 @@
         <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
             <div>
                 <h1 class="h2 mb-1">@Model.Title</h1>
-                <p class="text-muted mb-0">Browse stories, continue reading, or save your favorites.</p>
+                <p class="text-muted mb-0">Duyệt truyện, tiếp tục đọc hoặc lưu yêu thích của bạn.</p>
             </div>
             @if (Context.Session.IsAuthenticated())
             {
                 <div class="d-flex flex-wrap gap-2">
-                    <a asp-controller="Library" asp-action="History" class="btn btn-outline-primary">My Library</a>
-                    <a asp-controller="Writer" asp-action="Stories" class="btn btn-primary">My Stories</a>
+                    <a asp-controller="Library" asp-action="History" class="btn btn-outline-primary">Thư viện của tôi</a>
+                    <a asp-controller="Writer" asp-action="Stories" class="btn btn-primary">Truyện của tôi</a>
                 </div>
             }
         </div>
@@ -25,12 +25,12 @@
             <div class="card-body">
                 <form asp-controller="Home" asp-action="Index" method="get" class="row g-3">
                     <div class="col-12 col-lg-8">
-                        <label for="searchTerm" class="form-label">Search story or author</label>
-                        <input id="searchTerm" name="searchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Search by story name or pen name" />
+                        <label for="searchTerm" class="form-label">Tìm kiếm truyện hoặc tác giả</label>
+                        <input id="searchTerm" name="searchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Tìm kiếm theo tên truyện hoặc bút danh" />
                     </div>
                     <div class="col-12 col-lg-4 d-flex align-items-end gap-2">
-                        <button type="submit" class="btn btn-primary">Search</button>
-                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Clear</a>
+                        <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Xóa</a>
                     </div>
                 </form>
             </div>
@@ -39,7 +39,7 @@
         @if (Model.Categories.Count > 0)
         {
             <div class="d-flex flex-wrap gap-2 mb-4">
-                <a asp-controller="Home" asp-action="Index" class="btn @(Model.CategoryId.HasValue ? "btn-outline-secondary" : "btn-dark") btn-sm">All</a>
+                <a asp-controller="Home" asp-action="Index" class="btn @(Model.CategoryId.HasValue ? "btn-outline-secondary" : "btn-dark") btn-sm">Tất cả</a>
                 @foreach (var category in Model.Categories)
                 {
                     <a asp-controller="Home"

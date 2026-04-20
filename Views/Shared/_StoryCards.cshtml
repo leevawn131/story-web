@@ -2,7 +2,7 @@
 
 @if (Model.Count == 0)
 {
-    <div class="alert alert-light border mb-0">No stories match the current filter.</div>
+    <div class="alert alert-light border mb-0">Không có truyện nào phù hợp với bộ lọc hiện tại.</div>
 }
 else
 {
@@ -18,7 +18,7 @@ else
                     else
                     {
                         <div class="bg-light d-flex align-items-center justify-content-center text-muted" style="height: 280px;">
-                            No cover
+                            Không có bìa
                         </div>
                     }
 
@@ -30,32 +30,32 @@ else
                             }
                             @if (item.IsFavourite)
                             {
-                                <span class="badge text-bg-warning">Favorite</span>
+                                <span class="badge text-bg-warning">Yêu thích</span>
                             }
                         </div>
 
                         <h2 class="h5 mb-2">@item.StoryName</h2>
                         <p class="text-muted small mb-2">
-                            @(string.IsNullOrWhiteSpace(item.AuthorName) ? "Unknown author" : item.AuthorName)
+                            @(string.IsNullOrWhiteSpace(item.AuthorName) ? "Tác giả không xác định" : item.AuthorName)
                         </p>
                         <p class="text-muted flex-grow-1 mb-3">
-                            @(string.IsNullOrWhiteSpace(item.Description) ? "No description yet." : item.Description)
+                            @(string.IsNullOrWhiteSpace(item.Description) ? "Chưa có mô tả." : item.Description)
                         </p>
 
                         <div class="small text-muted mb-3">
-                            <span class="me-3">@item.ChapterCount chapters</span>
-                            <span class="me-3">@item.Views views</span>
+                            <span class="me-3">@item.ChapterCount chương</span>
+                            <span class="me-3">@item.Views lượt xem</span>
                             @if (item.Rating.HasValue)
                             {
-                                <span>Rating @item.Rating.Value.ToString("0.0")</span>
+                                <span>Đánh giá @item.Rating.Value.ToString("0.0")</span>
                             }
                         </div>
 
                         <div class="d-flex flex-wrap gap-2">
-                            <a asp-controller="Home" asp-action="Story" asp-route-id="@item.StoryId" class="btn btn-primary btn-sm">View story</a>
+                            <a asp-controller="Home" asp-action="Story" asp-route-id="@item.StoryId" class="btn btn-primary btn-sm">Xem truyện</a>
                             @if (item.LastReadChapterId.HasValue)
                             {
-                                <a asp-controller="Home" asp-action="Chapter" asp-route-id="@item.LastReadChapterId" class="btn btn-outline-secondary btn-sm">Continue</a>
+                                <a asp-controller="Home" asp-action="Chapter" asp-route-id="@item.LastReadChapterId" class="btn btn-outline-secondary btn-sm">Đọc tiếp</a>
                             }
                         </div>
                     </div>

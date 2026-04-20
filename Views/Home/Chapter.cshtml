@@ -16,46 +16,46 @@
 <main class="py-5">
     <div class="container">
         <div class="mb-4">
-            <a asp-controller="Home" asp-action="Story" asp-route-id="@Model.StoryId" class="text-decoration-none small">Back to story</a>
+            <a asp-controller="Home" asp-action="Story" asp-route-id="@Model.StoryId" class="text-decoration-none small">Quay lại truyện</a>
             <h1 class="h2 mt-2 mb-1">@Model.StoryName</h1>
-            <p class="text-muted mb-0">@(string.IsNullOrWhiteSpace(Model.AuthorName) ? "Unknown author" : Model.AuthorName)</p>
+            <p class="text-muted mb-0">@(string.IsNullOrWhiteSpace(Model.AuthorName) ? "Tác giả không xác định" : Model.AuthorName)</p>
         </div>
 
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-body">
                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
                     <div>
-                        <h2 class="h3 mb-1">Chapter @FormatChapterNumber(Model.ChapterNumber): @Model.ChapterName</h2>
-                        <p class="text-muted mb-0">Your reading history is updated automatically while reading.</p>
-                    </div>
-                    <div class="d-flex flex-wrap gap-2">
-                        @if (Model.PreviousChapterId.HasValue)
-                        {
-                            <a asp-controller="Home" asp-action="Chapter" asp-route-id="@Model.PreviousChapterId" class="btn btn-outline-secondary">Previous</a>
-                        }
-                        <a asp-controller="Home" asp-action="Story" asp-route-id="@Model.StoryId" class="btn btn-outline-primary">All chapters</a>
-                        @if (Model.NextChapterId.HasValue)
-                        {
-                            <a asp-controller="Home" asp-action="Chapter" asp-route-id="@Model.NextChapterId" class="btn btn-primary">Next</a>
-                        }
+                        <h2 class="h3 mb-1">Chương @FormatChapterNumber(Model.ChapterNumber): @Model.ChapterName</h2>
+                        <p class="text-muted mb-0">Lịch sử đọc của bạn được cập nhật tự động khi đọc.</p>
                     </div>
                 </div>
 
                 <article class="lh-lg fs-5">
                     @Html.Raw(System.Net.WebUtility.HtmlEncode(Model.Content).Replace("\r\n", "<br />").Replace("\n", "<br />"))
                 </article>
+                <div class="d-flex flex-wrap justify-content-end gap-2">
+                        @if (Model.PreviousChapterId.HasValue)
+                        {
+                            <a asp-controller="Home" asp-action="Chapter" asp-route-id="@Model.PreviousChapterId" class="btn btn-outline-secondary">Chương trước</a>
+                        }
+                        <a asp-controller="Home" asp-action="Story" asp-route-id="@Model.StoryId" class="btn btn-outline-primary">All</a>
+                        @if (Model.NextChapterId.HasValue)
+                        {
+                            <a asp-controller="Home" asp-action="Chapter" asp-route-id="@Model.NextChapterId" class="btn btn-primary">Chương tiếp</a>
+                        }
+                </div>
             </div>
         </div>
 
         <div class="card shadow-sm border-0">
             <div class="card-body">
-                <h3 class="h5 mb-3">Jump to chapter</h3>
+                <h3 class="h5 mb-3">Nhảy tới chương</h3>
                 <div class="row g-2">
                     @foreach (var chapter in Model.Chapters)
                     {
                         <div class="col-12 col-md-6 col-xl-4">
                             <a asp-controller="Home" asp-action="Chapter" asp-route-id="@chapter.ChapterId" class="list-group-item list-group-item-action border rounded d-block h-100">
-                                <div class="fw-semibold">Chapter @FormatChapterNumber(chapter.ChapterNumber)</div>
+                                <div class="fw-semibold">Chương @FormatChapterNumber(chapter.ChapterNumber)</div>
                                 <small class="text-muted">@chapter.ChapterName</small>
                             </a>
                         </div>

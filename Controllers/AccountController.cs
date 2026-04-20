@@ -45,12 +45,12 @@ public class AccountController : Controller
 
         if (user is null || !BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
         {
-            ModelState.AddModelError(string.Empty, "Invalid username or password.");
+            ModelState.AddModelError(string.Empty, "Tên đăng nhập hoặc mật khẩu không hợp lệ.");
             return View(model);
         }
 
         HttpContext.Session.SetCurrentUser(user);
-        TempData["SuccessMessage"] = $"Welcome back, {user.UserName}.";
+        TempData["SuccessMessage"] = $"Chào mừng quay lại, {user.UserName}.";
 
         return RedirectAfterLogin(model.ReturnUrl, user.Role);
     }
@@ -83,12 +83,12 @@ public class AccountController : Controller
 
         if (await _context.Users.AnyAsync(item => item.UserName.ToLower() == normalizedUserName))
         {
-            ModelState.AddModelError(nameof(model.UserName), "This username is already taken.");
+            ModelState.AddModelError(nameof(model.UserName), "Tên đăng nhập này đã được sử dụng.");
         }
 
         if (await _context.Users.AnyAsync(item => item.Email.ToLower() == normalizedEmail))
         {
-            ModelState.AddModelError(nameof(model.Email), "This email is already in use.");
+            ModelState.AddModelError(nameof(model.Email), "Email này đã được sử dụng.");
         }
 
         if (!ModelState.IsValid)
@@ -109,11 +109,11 @@ public class AccountController : Controller
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
 
-        await AddNotificationAsync(user.id_User, "Your account is ready. Start reading stories or publish your own.");
+        await AddNotificationAsync(user.id_User, "Tài khoản của bạn đã sẵn sàng. Hãy bắt đầu đọc truyện hoặc xuất bản của riêng bạn.");
         await _context.SaveChangesAsync();
 
         HttpContext.Session.SetCurrentUser(user);
-        TempData["SuccessMessage"] = "Your account has been created successfully.";
+        TempData["SuccessMessage"] = "Tài khoản của bạn đã được tạo thành công.";
 
         return RedirectToAction(nameof(Profile));
     }
@@ -139,7 +139,7 @@ public class AccountController : Controller
             .AsNoTracking()
             .AnyAsync(item => item.Email.ToLower() == normalizedEmail);
 
-        ViewBag.ResetMessage = "If an account exists for that email, a reset link would be sent. This demo simulates the request only.";
+        ViewBag.ResetMessage = "Nếu tài khoản tồn tại cho email đó, sẽ gửi liên kết đặt lại. Demo này chỉ mô phỏng yêu cầu.";
         ModelState.Clear();
 
         return View(new ForgotPasswordViewModel());
@@ -150,7 +150,7 @@ public class AccountController : Controller
     public IActionResult Logout()
     {
         HttpContext.Session.ClearCurrentUser();
-        TempData["SuccessMessage"] = "You have been signed out.";
+        TempData["SuccessMessage"] = "Bạn đã đăng xuất.";
         return RedirectToAction(nameof(Login));
     }
 
@@ -186,12 +186,12 @@ public class AccountController : Controller
 
         if (await _context.Users.AnyAsync(item => item.id_User != user.id_User && item.UserName.ToLower() == model.UserName.ToLower()))
         {
-            ModelState.AddModelError(nameof(model.UserName), "This username is already taken.");
+            ModelState.AddModelError(nameof(model.UserName), "Tên đăng nhập này đã được sử dụng.");
         }
 
         if (await _context.Users.AnyAsync(item => item.id_User != user.id_User && item.Email.ToLower() == model.Email.ToLower()))
         {
-            ModelState.AddModelError(nameof(model.Email), "This email is already in use.");
+            ModelState.AddModelError(nameof(model.Email), "Email này đã được sử dụng.");
         }
 
         if (!ModelState.IsValid)
@@ -203,11 +203,11 @@ public class AccountController : Controller
         user.Email = model.Email;
         user.ModifiedAt = DateTime.UtcNow;
 
-        await AddNotificationAsync(user.id_User, "Your profile information was updated.");
+        await AddNotificationAsync(user.id_User, "Thông tin hồ sơ của bạn đã được cập nhật.");
         await _context.SaveChangesAsync();
 
         HttpContext.Session.SetCurrentUser(user);
-        TempData["SuccessMessage"] = "Your profile has been updated.";
+        TempData["SuccessMessage"] = "Hồ sơ của bạn đã được cập nhật.";
 
         return RedirectToAction(nameof(Profile));
     }
@@ -226,12 +226,12 @@ public class AccountController : Controller
 
         if (!BCrypt.Net.BCrypt.Verify(model.OldPassword, user.PasswordHash))
         {
-            ModelState.AddModelError(nameof(model.OldPassword), "The old password is incorrect.");
+            ModelState.AddModelError(nameof(model.OldPassword), "Mật khẩu cũ không chính xác.");
         }
 
         if (model.OldPassword == model.NewPassword)
         {
-            ModelState.AddModelError(nameof(model.NewPassword), "Please choose a new password.");
+            ModelState.AddModelError(nameof(model.NewPassword), "Vui lòng chọn mật khẩu mới.");
         }
 
         if (!ModelState.IsValid)
@@ -249,10 +249,10 @@ public class AccountController : Controller
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
         user.ModifiedAt = DateTime.UtcNow;
 
-        await AddNotificationAsync(user.id_User, "Your password was changed successfully.");
+        await AddNotificationAsync(user.id_User, "Mật khẩu của bạn đã được thay đổi thành công.");
         await _context.SaveChangesAsync();
 
-        TempData["SuccessMessage"] = "Your password has been changed.";
+        TempData["SuccessMessage"] = "Mật khẩu của bạn đã được thay đổi.";
 
         return RedirectToAction(nameof(Profile));
     }

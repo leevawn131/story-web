@@ -3,9 +3,9 @@
 <main class="py-5">
     <div class="container" style="max-width: 760px;">
         <div class="mb-4">
-            <a asp-controller="Account" asp-action="Profile" class="text-decoration-none small">Back to profile</a>
-            <h1 class="h2 mt-2 mb-1">Register as author</h1>
-            <p class="text-muted mb-0">You need an author profile with a pen name before posting stories.</p>
+            <a asp-controller="Account" asp-action="Profile" class="text-decoration-none small">Quay lại hồ sơ</a>
+            <h1 class="h2 mt-2 mb-1">Đăng ký làm tác giả</h1>
+            <p class="text-muted mb-0">Bạn cần hồ sơ tác giả có bút danh trước khi đăng truyện.</p>
         </div>
 
         @if (TempData["InfoMessage"] is string infoMessage)
@@ -25,13 +25,13 @@
 
                     <div class="mb-3">
                         <label asp-for="PenName" class="form-label"></label>
-                        <input asp-for="PenName" class="form-control" placeholder="Your public pen name" />
+                        <input asp-for="PenName" class="form-control" placeholder="Bút danh công khai của bạn" />
                         <span asp-validation-for="PenName" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="Bio" class="form-label"></label>
-                        <textarea asp-for="Bio" class="form-control" rows="4" placeholder="Short introduction about you"></textarea>
+                        <textarea asp-for="Bio" class="form-control" rows="4" placeholder="Giới thiệu ngắn về bạn"></textarea>
                         <span asp-validation-for="Bio" class="text-danger"></span>
                     </div>
 
@@ -42,8 +42,8 @@
                     </div>
 
                     <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">Save author profile</button>
-                        <a asp-controller="Writer" asp-action="Stories" class="btn btn-outline-secondary">Back</a>
+                        <button type="submit" class="btn btn-primary">Lưu hồ sơ tác giả</button>
+                        <a asp-controller="Writer" asp-action="Stories" class="btn btn-outline-secondary">Quay lại</a>
                     </div>
                 </form>
             </div>

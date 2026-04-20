@@ -17,14 +17,14 @@
     <div class="container">
         <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
             <div>
-                <a asp-controller="Writer" asp-action="Stories" class="text-decoration-none small">Back to my stories</a>
+                <a asp-controller="Writer" asp-action="Stories" class="text-decoration-none small">Quay lại truyện của tôi</a>
                 <h1 class="h2 mt-2 mb-1">@Model.StoryName</h1>
-                <p class="text-muted mb-0">Status: @(Model.PostStatus ?? "Draft")</p>
+                <p class="text-muted mb-0">Trạng thái: @(Model.PostStatus ?? "Nháp")</p>
             </div>
             <div class="d-flex flex-wrap gap-2">
-                <a asp-action="CreateChapter" asp-route-storyId="@Model.StoryId" class="btn btn-primary">Add chapter</a>
-                <a asp-action="EditStory" asp-route-id="@Model.StoryId" class="btn btn-outline-secondary">Edit story</a>
-                <a asp-controller="Home" asp-action="Story" asp-route-id="@Model.StoryId" class="btn btn-outline-dark">View public page</a>
+                <a asp-action="CreateChapter" asp-route-storyId="@Model.StoryId" class="btn btn-primary">Thêm chương</a>
+                <a asp-action="EditStory" asp-route-id="@Model.StoryId" class="btn btn-outline-secondary">Chỉnh sửa truyện</a>
+                <a asp-controller="Home" asp-action="Story" asp-route-id="@Model.StoryId" class="btn btn-outline-dark">Xem trang công khai</a>
             </div>
         </div>
 
@@ -36,29 +36,29 @@
         @if (Model.PostStatus == "cho_duyet")
         {
             <div class="alert alert-warning">
-                <strong>⏳ Awaiting Review:</strong> Your story has been submitted for admin review. Once approved, it will be published and visible to readers.
+                <strong>⏳ Chờ xem xét:</strong> Truyện của bạn đã được gửi để xem xét của quản trị viên. Sau khi được chấp phê, nó sẽ được xuất bản và hiển thị cho độc giả.
             </div>
         }
         else if (Model.PostStatus == "da_duyet")
         {
             <div class="alert alert-success">
-                <strong>✅ Published:</strong> Your story has been approved and is now visible to readers.
+                <strong>✅ Xuất bản:</strong> Truyện của bạn đã được chấp phê và hiện đang hiển thị cho độc giả.
             </div>
         }
         else if (Model.PostStatus == "tu_choi")
         {
             <div class="alert alert-danger">
-                <strong>❌ Rejected:</strong> Your story was rejected.
+                <strong>❌ Bị từ chối:</strong> Truyện của bạn đã bị từ chối.
                 @if (!string.IsNullOrEmpty(Model.RejectReason))
                 {
-                    <p class="mb-0 mt-2"><strong>Reason:</strong> @Model.RejectReason</p>
+                    <p class="mb-0 mt-2"><strong>Lý do:</strong> @Model.RejectReason</p>
                 }
             </div>
         }
 
         @if (Model.Chapters.Count == 0)
         {
-            <div class="alert alert-light border">No chapters yet. Start by adding your first chapter.</div>
+            <div class="alert alert-light border">Chưa có chương nào. Bắt đầu bằng cách thêm chương đầu tiên của bạn.</div>
         }
         else
         {
@@ -66,10 +66,10 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Number</th>
-                            <th>Title</th>
-                            <th>Updated</th>
-                            <th class="text-end">Actions</th>
+                            <th>Số</th>
+                            <th>Tiêu đề</th>
+                            <th>Cập nhật</th>
+                            <th class="text-end">Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -81,10 +81,10 @@
                                 <td>@(chapter.PostedAt?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? "N/A")</td>
                                 <td class="text-end">
                                     <div class="d-flex flex-wrap justify-content-end gap-2">
-                                        <a asp-controller="Home" asp-action="Chapter" asp-route-id="@chapter.ChapterId" class="btn btn-outline-dark btn-sm">Read</a>
-                                        <a asp-action="EditChapter" asp-route-id="@chapter.ChapterId" class="btn btn-outline-primary btn-sm">Edit</a>
-                                        <form asp-action="DeleteChapter" asp-route-id="@chapter.ChapterId" method="post" class="d-inline" onsubmit="return confirm('Delete this chapter?');">
-                                            <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                                        <a asp-controller="Home" asp-action="Chapter" asp-route-id="@chapter.ChapterId" class="btn btn-outline-dark btn-sm">Đọc</a>
+                                        <a asp-action="EditChapter" asp-route-id="@chapter.ChapterId" class="btn btn-outline-primary btn-sm">Chỉnh sửa</a>
+                                        <form asp-action="DeleteChapter" asp-route-id="@chapter.ChapterId" method="post" class="d-inline" onsubmit="return confirm('Xóa chương này?');">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">Xóa</button>
                                         </form>
                                     </div>
                                 </td>
