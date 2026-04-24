@@ -1,0 +1,16 @@
+@model story_web.Models.Story
+
+<h2>Xác nhận xoá</h2>
+
+<p>Bạn có chắc muốn xoá truyện này không?</p>
+
+<div>
+    <strong>@Model.StoryName</strong>
+</div>
+
+<form asp-area="Admin" asp-controller="Stories" asp-action="Delete" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="id_Story" />
+    <button class="btn btn-danger">Xoá</button>
+    <a asp-action="Index" class="btn btn-secondary">Huỷ</a>
+</form>

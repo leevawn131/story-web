@@ -73,6 +73,9 @@
                         <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#rejectModal@s.id_Story">❌ Từ chối</button>
                     }
                 </td>
+                <td>
+                    <a asp-action="Delete" asp-route-id="@s.id_Story" class="btn btn-danger">Xoá</a>
+                </td>
             </tr>
         }
     </tbody>
