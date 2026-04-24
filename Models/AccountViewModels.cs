@@ -5,11 +5,12 @@ namespace story_web.Models;
 public class LoginViewModel
 {
     [Required]
-    [Display(Name = "Username")]
+    [Display(Name = "Tên đăng nhập")]
     public string UserName { get; set; } = string.Empty;
 
     [Required]
     [DataType(DataType.Password)]
+    [Display(Name = "Mật khẩu")]
     public string Password { get; set; } = string.Empty;
 
     public string? ReturnUrl { get; set; }
@@ -18,7 +19,7 @@ public class LoginViewModel
 public class RegisterViewModel
 {
     [Required]
-    [Display(Name = "Username")]
+    [Display(Name = "Tên đăng nhập")]
     [StringLength(100)]
     public string UserName { get; set; } = string.Empty;
 
@@ -31,13 +32,13 @@ public class RegisterViewModel
     [Required]
     [DataType(DataType.Password)]
     [MinLength(6)]
-    [Display(Name = "Password")]
+    [Display(Name = "Mật khẩu")]
     public string Password { get; set; } = string.Empty;
 
     [Required]
     [DataType(DataType.Password)]
-    [Display(Name = "Confirm password")]
-    [Compare(nameof(Password), ErrorMessage = "Passwords do not match.")]
+    [Display(Name = "Xác nhận mật khẩu")]
+    [Compare(nameof(Password), ErrorMessage = "Mật khẩu không khớp.")]
     public string ConfirmPassword { get; set; } = string.Empty;
 }
 
@@ -46,13 +47,14 @@ public class ForgotPasswordViewModel
     [Required]
     [EmailAddress]
     [Display(Name = "Email")]
+    [StringLength(255)]
     public string Email { get; set; } = string.Empty;
 }
 
 public class UpdateProfileInputModel
 {
     [Required]
-    [Display(Name = "Username")]
+    [Display(Name = "Tên đăng nhập")]
     [StringLength(100)]
     public string UserName { get; set; } = string.Empty;
 
@@ -62,7 +64,7 @@ public class UpdateProfileInputModel
     [StringLength(255)]
     public string Email { get; set; } = string.Empty;
 
-    [Display(Name = "Pen name")]
+    [Display(Name = "Bút danh")]
     [StringLength(100)]
     public string? PenName { get; set; }
 }
@@ -71,19 +73,19 @@ public class ChangePasswordInputModel
 {
     [Required]
     [DataType(DataType.Password)]
-    [Display(Name = "Old password")]
+    [Display(Name = "Mật khẩu cũ")]
     public string OldPassword { get; set; } = string.Empty;
 
     [Required]
     [DataType(DataType.Password)]
-    [Display(Name = "New password")]
+    [Display(Name = "Mật khẩu mới")]
     [MinLength(6)]
     public string NewPassword { get; set; } = string.Empty;
 
     [Required]
     [DataType(DataType.Password)]
-    [Display(Name = "Confirm new password")]
-    [Compare(nameof(NewPassword), ErrorMessage = "New passwords do not match.")]
+    [Display(Name = "Xác nhận mật khẩu mới")]
+    [Compare(nameof(NewPassword), ErrorMessage = "Mật khẩu mới không khớp.")]
     public string ConfirmNewPassword { get; set; } = string.Empty;
 }
 

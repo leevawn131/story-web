@@ -12,7 +12,7 @@
     <div class="col-12 col-lg-6">
         <label asp-for="Form.CategoryId" class="form-label"></label>
         <select asp-for="Form.CategoryId" class="form-select">
-            <option value="">Select a category</option>
+            <option value="">Chọn thể loại</option>
             @foreach (var category in Model.Categories)
             {
                 <option value="@category.CategoryId">@category.CategoryName</option>
@@ -24,28 +24,28 @@
     <div class="col-12 col-lg-6">
         <label asp-for="Form.ImageFile" class="form-label"></label>
         <input asp-for="Form.ImageFile" type="file" class="form-control" accept=".jpg,.jpeg,.png,.gif,.webp" />
-        <small class="text-muted">JPG, PNG, GIF, WebP (max 5 MB)</small>
+        <small class="text-muted">JPG, PNG, GIF, WebP (tối đa 5 MB)</small>
         <span asp-validation-for="Form.ImageFile" class="text-danger"></span>
     </div>
 
     @if (!string.IsNullOrEmpty(Model.Form.CurrentImage))
     {
         <div class="col-12">
-            <p class="form-text">Current cover image:</p>
+            <p class="form-text">Ảnh bìa hiện tại:</p>
             <img src="@Model.Form.CurrentImage" alt="Current cover" style="max-width: 200px; max-height: 300px; object-fit: cover;" class="rounded" />
-            <p class="form-text text-muted small">Upload a new image to replace</p>
+            <p class="form-text text-muted small">Tải lên hình ảnh mới để thay thế</p>
         </div>
     }
 
     <div class="col-12">
         <label asp-for="Form.Description" class="form-label"></label>
-        <small class="d-block text-muted mb-2">Summary that appears on the homepage</small>
-        <textarea asp-for="Form.Description" class="form-control" rows="6" placeholder="Brief description of your story..."></textarea>
+        <small class="d-block text-muted mb-2">Tóm tắt xuất hiện trên trang chủ</small>
+        <textarea asp-for="Form.Description" class="form-control" rows="6" placeholder="Mô tả ngắn về truyện của bạn..."></textarea>
         <span asp-validation-for="Form.Description" class="text-danger"></span>
     </div>
 </div>
 
 <div class="d-flex flex-wrap gap-2 mt-4">
-    <button type="submit" class="btn btn-primary">Save story</button>
-    <a asp-controller="Writer" asp-action="Stories" class="btn btn-outline-secondary">Cancel</a>
+    <button type="submit" class="btn btn-primary">Lưu truyện</button>
+    <a asp-controller="Writer" asp-action="Stories" class="btn btn-outline-secondary">Hủy</a>
 </div>

@@ -4,15 +4,15 @@
     <div class="container">
         <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
             <div>
-                <h1 class="h2 mb-1">My Profile</h1>
-                <p class="text-muted mb-0">Manage your account, library, and writing space.</p>
+                <h1 class="h2 mb-1">Hồ sơ của tôi</h1>
+                <p class="text-muted mb-0">Quản lý tài khoản, thư viện và không gian viết của bạn.</p>
             </div>
             <div class="d-flex flex-wrap gap-2">
-                <a asp-controller="Library" asp-action="History" class="btn btn-outline-primary">My Library</a>
-                <a asp-controller="Writer" asp-action="Stories" class="btn btn-primary">Writer Studio</a>
+                <a asp-controller="Library" asp-action="History" class="btn btn-outline-primary">Thư viện của tôi</a>
+                <a asp-controller="Writer" asp-action="Stories" class="btn btn-primary">Studio Viết</a>
                 @if (Context.Session.GetCurrentUserRole() == UserRoles.Admin)
                 {
-                    <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="btn btn-outline-dark">Admin</a>
+                    <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="btn btn-outline-dark">Quản trị viên</a>
                 }
             </div>
         </div>
@@ -26,18 +26,18 @@
             <div class="col-12 col-lg-4">
                 <div class="card shadow-sm border-0 h-100">
                     <div class="card-body">
-                        <h2 class="h5 mb-3">Account overview</h2>
+                        <h2 class="h5 mb-3">Tổng quan tài khoản</h2>
                         <dl class="row mb-0">
-                            <dt class="col-sm-5">Username</dt>
+                            <dt class="col-sm-5">Tên đăng nhập</dt>
                             <dd class="col-sm-7">@Model.UserName</dd>
 
                             <dt class="col-sm-5">Email</dt>
                             <dd class="col-sm-7">@Model.Email</dd>
 
-                            <dt class="col-sm-5">Pen name</dt>
-                            <dd class="col-sm-7">@(Model.PenName ?? "Not set")</dd>
+                            <dt class="col-sm-5">Bút danh</dt>
+                            <dd class="col-sm-7">@(Model.PenName ?? "Chưa đặt")</dd>
 
-                            <dt class="col-sm-5">Created</dt>
+                            <dt class="col-sm-5">Tạo</dt>
                             <dd class="col-sm-7">@(Model.CreatedDate?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? "N/A")</dd>
                         </dl>
                     </div>
@@ -47,7 +47,7 @@
             <div class="col-12 col-lg-4">
                 <div class="card shadow-sm border-0 h-100">
                     <div class="card-body">
-                        <h2 class="h5 mb-3">Update profile</h2>
+                        <h2 class="h5 mb-3">Cập nhật hồ sơ</h2>
                         <form asp-action="UpdateProfile" method="post">
                             <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
@@ -69,7 +69,7 @@
                                 <span asp-validation-for="UpdateProfile.PenName" class="text-danger"></span>
                             </div>
 
-                            <button type="submit" class="btn btn-primary">Save changes</button>
+                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
                         </form>
                     </div>
                 </div>
@@ -78,7 +78,7 @@
             <div class="col-12 col-lg-4">
                 <div class="card shadow-sm border-0 h-100">
                     <div class="card-body">
-                        <h2 class="h5 mb-3">Change password</h2>
+                        <h2 class="h5 mb-3">Thay đổi mật khẩu</h2>
                         <form asp-action="ChangePassword" method="post">
                             <div class="mb-3">
                                 <label asp-for="ChangePassword.OldPassword" class="form-label"></label>
@@ -98,7 +98,7 @@
                                 <span asp-validation-for="ChangePassword.ConfirmNewPassword" class="text-danger"></span>
                             </div>
 
-                            <button type="submit" class="btn btn-dark">Update password</button>
+                            <button type="submit" class="btn btn-dark">Cập nhật mật khẩu</button>
                         </form>
                     </div>
                 </div>
@@ -110,13 +110,13 @@
                 <div class="card shadow-sm border-0 h-100">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h2 class="h5 mb-0">Reading history</h2>
-                            <a asp-controller="Library" asp-action="History" class="small text-decoration-none">View all</a>
+                            <h2 class="h5 mb-0">Lịch sử đọc</h2>
+                            <a asp-controller="Library" asp-action="History" class="small text-decoration-none">Xem tất cả</a>
                         </div>
 
                         @if (Model.ReadingHistory.Count == 0)
                         {
-                            <p class="text-muted mb-0">No reading history yet.</p>
+                            <p class="text-muted mb-0">Chưa có lịch sử đọc.</p>
                         }
                         else
                         {
@@ -128,7 +128,7 @@
                                        asp-route-id="@(item.ChapterId ?? item.StoryId)"
                                        class="list-group-item list-group-item-action px-0">
                                         <div class="fw-semibold">@item.StoryName</div>
-                                        <small class="text-muted d-block">@(item.Subtitle ?? "Recently read")</small>
+                                        <small class="text-muted d-block">@(item.Subtitle ?? "Đọc gần đây")</small>
                                         <small class="text-muted">@(item.ActivityAt?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? string.Empty)</small>
                                     </a>
                                 }
@@ -142,13 +142,13 @@
                 <div class="card shadow-sm border-0 h-100">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h2 class="h5 mb-0">Favorite stories</h2>
-                            <a asp-controller="Library" asp-action="Favorites" class="small text-decoration-none">View all</a>
+                            <h2 class="h5 mb-0">Truyện yêu thích</h2>
+                            <a asp-controller="Library" asp-action="Favorites" class="small text-decoration-none">Xem tất cả</a>
                         </div>
 
                         @if (Model.FavouriteStories.Count == 0)
                         {
-                            <p class="text-muted mb-0">You have not added any favorites yet.</p>
+                            <p class="text-muted mb-0">Bạn chưa thêm truyện yêu thích.</p>
                         }
                         else
                         {
@@ -157,7 +157,7 @@
                                 {
                                     <a asp-controller="Home" asp-action="Story" asp-route-id="@item.StoryId" class="list-group-item list-group-item-action px-0">
                                         <div class="fw-semibold">@item.StoryName</div>
-                                        <small class="text-muted d-block">@(item.Subtitle ?? "Favorite")</small>
+                                        <small class="text-muted d-block">@(item.Subtitle ?? "Yêu thích")</small>
                                         <small class="text-muted">@(item.ActivityAt?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? string.Empty)</small>
                                     </a>
                                 }
@@ -171,13 +171,13 @@
                 <div class="card shadow-sm border-0 h-100">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h2 class="h5 mb-0">My stories</h2>
-                            <a asp-controller="Writer" asp-action="Stories" class="small text-decoration-none">Manage</a>
+                            <h2 class="h5 mb-0">Truyện của tôi</h2>
+                            <a asp-controller="Writer" asp-action="Stories" class="small text-decoration-none">Quản lý</a>
                         </div>
 
                         @if (Model.PostedStories.Count == 0)
                         {
-                            <p class="text-muted mb-0">You have not posted any stories yet.</p>
+                            <p class="text-muted mb-0">Bạn chưa đăng truyện nào.</p>
                         }
                         else
                         {

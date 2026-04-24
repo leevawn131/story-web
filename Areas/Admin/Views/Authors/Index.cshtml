@@ -1,0 +1,35 @@
+@model List<story_web.Models.Author>
+
+<h2>Quản lý tác giả</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Bút danh</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var a in Model)
+        {
+            <tr>
+                <td>@a.id_Author</td>
+                <td>@a.User?.UserName</td>
+                <td>@a.PenName</td>
+                <td>
+                    <a asp-action="Edit"
+                       asp-route-id="@a.id_Author"
+                       class="btn btn-warning">Sửa</a>
+
+                    <a asp-action="Delete"
+                       asp-route-id="@a.id_Author"
+                       class="btn btn-danger"
+                       onclick="return confirm('Xoá tác giả?')">Xoá</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

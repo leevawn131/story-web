@@ -26,7 +26,7 @@ public class WriterController : Controller
     {
         if (!await HasRegisteredAuthorAsync())
         {
-            TempData["InfoMessage"] = "Please register as an author before creating stories.";
+            TempData["InfoMessage"] = "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
             return RedirectToAction(nameof(RegisterAuthor));
         }
 
@@ -89,7 +89,7 @@ public class WriterController : Controller
 
         if (duplicatePenNameExists)
         {
-            ModelState.AddModelError(nameof(model.PenName), "This pen name is already in use.");
+            ModelState.AddModelError(nameof(model.PenName), "Bút danh này đã được sử dụng.");
             return View(model);
         }
 
@@ -110,7 +110,7 @@ public class WriterController : Controller
 
         await _context.SaveChangesAsync();
 
-        TempData["SuccessMessage"] = "Author profile saved successfully.";
+        TempData["SuccessMessage"] = "Thông tin tác giả đã được lưu thành công.";
         return RedirectToAction(nameof(Stories));
     }
 
@@ -119,7 +119,7 @@ public class WriterController : Controller
     {
         if (!await HasRegisteredAuthorAsync())
         {
-            TempData["InfoMessage"] = "Please register as an author before creating stories.";
+            TempData["InfoMessage"] = "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
             return RedirectToAction(nameof(RegisterAuthor));
         }
 
@@ -177,7 +177,7 @@ public class WriterController : Controller
         AddNotification(currentUserId, $"Story \"{story.StoryName}\" has been created.");
         await _context.SaveChangesAsync();
 
-        TempData["SuccessMessage"] = "Story created successfully.";
+        TempData["SuccessMessage"] = "Truyện đã được tạo thành công.";
         return RedirectToAction(nameof(Chapters), new { storyId = story.id_Story });
     }
 
@@ -186,7 +186,7 @@ public class WriterController : Controller
     {
         if (!await HasRegisteredAuthorAsync())
         {
-            TempData["InfoMessage"] = "Please register as an author before creating stories.";
+            TempData["InfoMessage"] = "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
             return RedirectToAction(nameof(RegisterAuthor));
         }
 
@@ -216,7 +216,7 @@ public class WriterController : Controller
 
         if (!await HasRegisteredAuthorAsync())
         {
-            TempData["InfoMessage"] = "Please register as an author before creating stories.";
+            TempData["InfoMessage"] = "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
             return RedirectToAction(nameof(RegisterAuthor));
         }
 
@@ -256,7 +256,7 @@ public class WriterController : Controller
         AddNotification(HttpContext.Session.GetCurrentUserId()!.Value, $"Story \"{story.StoryName}\" has been updated.");
         await _context.SaveChangesAsync();
 
-        TempData["SuccessMessage"] = "Story updated successfully.";
+        TempData["SuccessMessage"] = "Truyện đã được cập nhật thành công.";
         return RedirectToAction(nameof(Stories));
     }
 
@@ -266,7 +266,7 @@ public class WriterController : Controller
     {
         if (!await HasRegisteredAuthorAsync())
         {
-            TempData["InfoMessage"] = "Please register as an author before creating stories.";
+            TempData["InfoMessage"] = "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
             return RedirectToAction(nameof(RegisterAuthor));
         }
 
@@ -314,7 +314,7 @@ public class WriterController : Controller
         AddNotification(HttpContext.Session.GetCurrentUserId()!.Value, $"Story \"{story.StoryName}\" has been deleted.");
         await _context.SaveChangesAsync();
 
-        TempData["SuccessMessage"] = "Story deleted successfully.";
+        TempData["SuccessMessage"] = "Truyện đã được xóa thành công.";
         return RedirectToAction(nameof(Stories));
     }
 
@@ -323,7 +323,7 @@ public class WriterController : Controller
     {
         if (!await HasRegisteredAuthorAsync())
         {
-            TempData["InfoMessage"] = "Please register as an author before creating stories.";
+            TempData["InfoMessage"] = "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
             return RedirectToAction(nameof(RegisterAuthor));
         }
 
@@ -360,7 +360,7 @@ public class WriterController : Controller
     {
         if (!await HasRegisteredAuthorAsync())
         {
-            TempData["InfoMessage"] = "Please register as an author before creating stories.";
+            TempData["InfoMessage"] = "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
             return RedirectToAction(nameof(RegisterAuthor));
         }
 
@@ -383,7 +383,7 @@ public class WriterController : Controller
     {
         if (!await HasRegisteredAuthorAsync())
         {
-            TempData["InfoMessage"] = "Please register as an author before creating stories.";
+            TempData["InfoMessage"] = "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
             return RedirectToAction(nameof(RegisterAuthor));
         }
 
@@ -421,7 +421,7 @@ public class WriterController : Controller
         AddNotification(HttpContext.Session.GetCurrentUserId()!.Value, $"Chapter \"{chapter.ChapterName}\" has been added to \"{story.StoryName}\".");
         await _context.SaveChangesAsync();
 
-        TempData["SuccessMessage"] = "Chapter created successfully.";
+        TempData["SuccessMessage"] = "Chương đã được tạo thành công.";
         return RedirectToAction(nameof(Chapters), new { storyId = story.id_Story });
     }
 
@@ -430,7 +430,7 @@ public class WriterController : Controller
     {
         if (!await HasRegisteredAuthorAsync())
         {
-            TempData["InfoMessage"] = "Please register as an author before creating stories.";
+            TempData["InfoMessage"] = "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
             return RedirectToAction(nameof(RegisterAuthor));
         }
 
@@ -457,7 +457,7 @@ public class WriterController : Controller
     {
         if (!await HasRegisteredAuthorAsync())
         {
-            TempData["InfoMessage"] = "Please register as an author before creating stories.";
+            TempData["InfoMessage"] = "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
             return RedirectToAction(nameof(RegisterAuthor));
         }
 
@@ -490,7 +490,7 @@ public class WriterController : Controller
         AddNotification(HttpContext.Session.GetCurrentUserId()!.Value, $"Chapter \"{chapter.ChapterName}\" has been updated.");
         await _context.SaveChangesAsync();
 
-        TempData["SuccessMessage"] = "Chapter updated successfully.";
+        TempData["SuccessMessage"] = "Chương đã được cập nhật thành công.";
         return RedirectToAction(nameof(Chapters), new { storyId = model.StoryId });
     }
 
@@ -500,7 +500,7 @@ public class WriterController : Controller
     {
         if (!await HasRegisteredAuthorAsync())
         {
-            TempData["InfoMessage"] = "Please register as an author before creating stories.";
+            TempData["InfoMessage"] = "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
             return RedirectToAction(nameof(RegisterAuthor));
         }
 
@@ -526,7 +526,7 @@ public class WriterController : Controller
         AddNotification(HttpContext.Session.GetCurrentUserId()!.Value, $"Chapter \"{chapter.ChapterName}\" has been deleted.");
         await _context.SaveChangesAsync();
 
-        TempData["SuccessMessage"] = "Chapter deleted successfully.";
+        TempData["SuccessMessage"] = "Chương đã được xóa thành công.";
         return RedirectToAction(nameof(Chapters), new { storyId = chapter.id_Story.Value });
     }
 
@@ -552,14 +552,14 @@ public class WriterController : Controller
 
         if (!allowedExtensions.Contains(extension))
         {
-            ModelState.AddModelError("ImageFile", "Only image files (.jpg, .jpeg, .png, .gif, .webp) are allowed.");
+            ModelState.AddModelError("ImageFile", "Chỉ các tập hình ảnh (.jpg, .jpeg, .png, .gif, .webp) được phép.");
             return null;
         }
 
         const long maxFileSize = 5 * 1024 * 1024; // 5 MB
         if (file.Length > maxFileSize)
         {
-            ModelState.AddModelError("ImageFile", "Image file must be smaller than 5 MB.");
+            ModelState.AddModelError("ImageFile", "Tập hình ảnh phải nhỏ hơn 5 MB.");
             return null;
         }
 
@@ -584,7 +584,7 @@ public class WriterController : Controller
         }
         catch (Exception)
         {
-            ModelState.AddModelError("ImageFile", "Failed to save image. Please try again.");
+            ModelState.AddModelError("ImageFile", "Không thể lưu hình ảnh. Vui lòng thử lại.");
             return null;
         }
     }

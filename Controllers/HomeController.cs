@@ -195,12 +195,12 @@ public class HomeController : Controller
                 Added_At = DateTime.UtcNow
             });
 
-            TempData["SuccessMessage"] = $"\"{story.StoryName}\" has been added to your favorites.";
+            TempData["SuccessMessage"] = $"\"{story.StoryName}\" đã được thêm vào yêu thích của bạn.";
         }
         else
         {
             _context.Favourites.Remove(favourite);
-            TempData["SuccessMessage"] = $"\"{story.StoryName}\" has been removed from your favorites.";
+            TempData["SuccessMessage"] = $"\"{story.StoryName}\" đã được xóa khỏi yêu thích của bạn.";
         }
 
         await _context.SaveChangesAsync();

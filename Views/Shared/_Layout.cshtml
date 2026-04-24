@@ -121,17 +121,7 @@
                             <a asp-controller="Account"
                                asp-action="Profile"
                                class="btn btn-outline-light btn-sm">
-                                @(currentUserName ?? "Profile")
-                            </a>
-                            <a asp-controller="Library"
-                               asp-action="History"
-                               class="btn btn-outline-light btn-sm">
-                                My Library
-                            </a>
-                            <a asp-controller="Writer"
-                               asp-action="Stories"
-                               class="btn btn-light btn-sm">
-                                My Stories
+                                @(currentUserName ?? "Hồ sơ")
                             </a>
                             @if (currentUserRole == UserRoles.Admin)
                             {
@@ -139,17 +129,17 @@
                                    asp-controller="Home"
                                    asp-action="Index"
                                    class="btn btn-warning btn-sm">
-                                    Admin
+                                    Quản trị viên
                                 </a>
                             }
                             <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-                                <button type="submit" class="btn btn-light btn-sm">Logout</button>
+                                <button type="submit" class="btn btn-light btn-sm">Đăng xuất</button>
                             </form>
                         }
                         else
                         {
-                            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-light btn-sm">Login</a>
-                            <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-sm">Register</a>
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-light btn-sm">Đăng nhập</a>
+                            <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-sm">Đăng ký</a>
                         }
                     </div>
 
