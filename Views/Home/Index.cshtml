@@ -1,6 +1,7 @@
 @model HomeIndexViewModel
 
 <main class="py-5">
+
     <div class="container">
         <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
             <div>
@@ -35,7 +36,41 @@
                 </form>
             </div>
         </div>
+        <div class="row mb-4">
 
+            <!-- Top Views -->
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-header fw-bold">🔥 Top lượt xem</div>
+                    <ul class="list-group list-group-flush">
+                        @foreach (var item in Model.TopViews)
+                        {
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>@item.StoryName</span>
+                                <span class="text-muted">@item.Views lượt xem</span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Top Favourites -->
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-header fw-bold">❤️ Top yêu thích</div>
+                    <ul class="list-group list-group-flush">
+                        @foreach (var item in Model.TopFavourites)
+                        {
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>@item.StoryName</span>
+                                <span class="text-muted">@item.FavouriteCount yêu thích</span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+
+        </div>
         @if (Model.Categories.Count > 0)
         {
             <div class="d-flex flex-wrap gap-2 mb-4">
@@ -53,5 +88,41 @@
         }
 
         <partial name="_StoryCards" model="Model.Stories" />
+        <section class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="h3 border-start border-primary border-4 ps-3">Mới cập nhật</h2>
+        <a asp-action="Index" class="btn btn-sm btn-outline-primary">Xem tất cả</a>
+    </div>
+
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-3">
+        @foreach (var story in Model.LatestUpdatedStories)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm story-card">
+                    <a asp-action="Story" asp-route-id="@story.StoryId" class="text-decoration-none text-dark">
+                        <div class="story-img-container">
+                            @if (!string.IsNullOrWhiteSpace(story.ImageUrl))
+                            {
+                                <img src="@story.ImageUrl" alt="@story.StoryName" />
+                            }
+                            else
+                            {
+                                <div class="bg-secondary d-flex align-items-center justify-content-center h-100 text-white">No Image</div>
+                            }
+                            <span class="chapter-badge">@story.ChapterCount chương</span>
+                            <span class="view-badge"><i class="bi bi-eye"></i> @story.Views</span>
+                        </div>
+                        <div class="card-body p-2">
+                            <h5 class="story-title">@story.StoryName</h5>
+                            <div class="small text-muted d-flex justify-content-between">
+                                <span><i class="bi bi-person"></i> @story.AuthorName</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</section>
     </div>
 </main>

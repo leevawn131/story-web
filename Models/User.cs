@@ -33,6 +33,7 @@ public class User
     public Author? Author { get; set; }
 
     public ICollection<Notification> Notifications { get; set; } = [];
+    public ICollection<Comment>? Comments { get; set; }
 }
 
 public static class UserRoles

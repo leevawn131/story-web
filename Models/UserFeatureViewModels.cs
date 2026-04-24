@@ -37,7 +37,14 @@ public class StoryCardViewModel
 
     public int? LastReadChapterId { get; set; }
 }
-
+public class RankingItemViewModel
+{
+    public int StoryId { get; set; }
+    public string StoryName { get; set; } = string.Empty;
+    public string? ImageUrl { get; set; }
+    public int Views { get; set; }
+    public int FavouriteCount { get; set; }
+}
 public class HomeIndexViewModel
 {
     public string? SearchTerm { get; set; }
@@ -49,8 +56,18 @@ public class HomeIndexViewModel
     public IReadOnlyList<CategoryLinkViewModel> Categories { get; set; } = Array.Empty<CategoryLinkViewModel>();
 
     public IReadOnlyList<StoryCardViewModel> Stories { get; set; } = Array.Empty<StoryCardViewModel>();
-}
+    public IReadOnlyList<RankingItemViewModel> TopViews { get; set; } = Array.Empty<RankingItemViewModel>();
 
+    public IReadOnlyList<RankingItemViewModel> TopFavourites { get; set; } = Array.Empty<RankingItemViewModel>();
+    public IReadOnlyList<StoryCardViewModel> LatestUpdatedStories { get; set; } = new List<StoryCardViewModel>();
+}
+public class CommentItemViewModel
+{
+    public int CommentId { get; set; }
+    public string UserName { get; set; } = "";
+    public string Content { get; set; } = "";
+    public DateTime? PostedAt { get; set; }
+}
 public class StoryChapterListItemViewModel
 {
     public int ChapterId { get; set; }
@@ -93,6 +110,8 @@ public class StoryDetailsViewModel
     public int? ContinueReadingChapterId { get; set; }
 
     public IReadOnlyList<StoryChapterListItemViewModel> Chapters { get; set; } = Array.Empty<StoryChapterListItemViewModel>();
+    public IReadOnlyList<CommentItemViewModel> Comments { get; set; } = new List<CommentItemViewModel>();
+    public IReadOnlyList<StoryCardViewModel> LatestUpdatedStories { get; set; } = new List<StoryCardViewModel>();
 }
 
 public class ChapterReaderViewModel

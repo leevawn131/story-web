@@ -20,12 +20,65 @@ public class HomeController : Controller
     public async Task<IActionResult> Index(string? searchTerm = null, int? categoryId = null)
     {
         var model = await BuildHomeIndexViewModelAsync(searchTerm, categoryId, "Kho truyện");
+        var topViews = await _context.Stories
+        // bảng xếp hạng yêu thích
+        .AsNoTracking()
+        .OrderByDescending(s => s.Views)
+        .Take(5)
+        .Select(s => new RankingItemViewModel
+        {
+            StoryId = s.id_Story,
+            StoryName = s.StoryName!,
+            ImageUrl = s.Image,
+            Views = s.Views ?? 0,
+            FavouriteCount = _context.Favourites.Count(f => f.id_Story == s.id_Story)
+        })
+        .ToListAsync();
+        // bảng xếp hạng lượt xem
+        var topFavourites = await _context.Stories
+        .AsNoTracking()
+        .OrderByDescending(s => _context.Favourites.Count(f => f.id_Story == s.id_Story))
+        .Take(5)
+        .Select(s => new RankingItemViewModel
+        {
+            StoryId = s.id_Story,
+            StoryName = s.StoryName!,
+            ImageUrl = s.Image,
+            Views = s.Views ?? 0,
+            FavouriteCount = _context.Favourites.Count(f => f.id_Story == s.id_Story)
+        })
+        
+        .ToListAsync();
+        // phần truyện mới cập nhật
+        var latestUpdatedStories = await _context.Stories
+        .AsNoTracking()
+        .Include(s => s.Author)
+            .ThenInclude(a => a!.User)
+        .Include(s => s.Category)
+        .Include(s => s.Chapters)
+        .OrderByDescending(s => s.Modified_At ?? s.Posted_At)
+        .Take(8)
+        .Select(s => new StoryCardViewModel
+        {
+            StoryId = s.id_Story,
+            StoryName = s.StoryName ?? "Untitled",
+            ImageUrl = s.Image,
+            AuthorName = s.Author!.PenName ?? s.Author.User!.UserName,
+            CategoryName = s.Category!.CategoryName,
+            ChapterCount = s.Chapters.Count,
+            Views = s.Views ?? 0
+        })
+        .ToListAsync();
+        model.LatestUpdatedStories = latestUpdatedStories;
+        model.TopViews = topViews;
+        model.TopFavourites = topFavourites;
         return View(model);
     }
 
     public IActionResult Privacy()
     {
         return View();
+
     }
 
     public async Task<IActionResult> Category(int id)
@@ -79,6 +132,19 @@ public class HomeController : Controller
         var favouriteCount = await _context.Favourites
             .AsNoTracking()
             .CountAsync(item => item.id_Story == id);
+        //phần bình luận
+        var comments = await _context.Comments
+    .Where(c => c.id_Story == id)
+    .Include(c => c.User)
+    .OrderByDescending(c => c.Posted_At)
+    .Select(c => new CommentItemViewModel
+    {
+        CommentId = c.id_Comment,
+        UserName = c.User!.UserName ?? "Ẩn danh",
+        Content = c.Content,
+        PostedAt = c.Posted_At
+    })
+    .ToListAsync();
 
         var model = new StoryDetailsViewModel
         {
@@ -106,7 +172,9 @@ public class HomeController : Controller
                     ChapterName = item.ChapterName ?? $"Chapter {item.ChapterNumber}",
                     PostedAt = item.Posted_At
                 })
-                .ToList()
+                .ToList(),
+                Comments = comments
+
         };
 
         return View(model);
@@ -162,7 +230,27 @@ public class HomeController : Controller
 
         return View(model);
     }
+    [HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> AddComment(int storyId, string content)
+{
+    var userId = HttpContext.Session.GetCurrentUserId();
+    if (!userId.HasValue)
+        return RedirectToAction("Login", "Account");
 
+    var comment = new Comment
+    {
+        id_Story = storyId,
+        id_User = userId.Value,
+        Content = content,
+        Posted_At = DateTime.Now
+    };
+
+    _context.Comments.Add(comment);
+    await _context.SaveChangesAsync();
+
+    return RedirectToAction("Story", new { id = storyId });
+}
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Auth]

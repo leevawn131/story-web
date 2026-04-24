@@ -15,5 +15,10 @@ public class Comment
 
     public DateTime? Posted_At { get; set; }
 
-    public string? Content { get; set; }
+    public required string Content { get; set; }
+    [ForeignKey("id_User")]  
+    public  User? User { get; set; }
+    [ForeignKey("id_Story")]
+    public Story? Story { get; set; }
+
 }
