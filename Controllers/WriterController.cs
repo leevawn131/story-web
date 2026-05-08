@@ -534,8 +534,43 @@ public class WriterController : Controller
             });
     }
     [HttpGet]
-public IActionResult Chapters(int storyId)
+[HttpGet]
+public async Task<IActionResult> Chapters(int storyId)
 {
-    return View();
+    // 1. Lấy thông tin truyện để đảm bảo người dùng này là chủ sở hữu
+    var story = await GetOwnedStoryAsync(storyId);
+
+    // Nếu không tìm thấy truyện, trả về trang 404
+    if (story is null)
+    {
+        return NotFound();
+    }
+
+    // 2. Tạo Model để truyền sang View
+    var model = new WriterStoryManageViewModel
+    {
+        StoryId = story.id_Story,
+        StoryName = story.StoryName ?? "Truyện chưa có tên",
+        PostStatus = story.PostStatus,
+        RejectReason = story.Reject_Reason,
+        
+        SelectedCategories = story.StoryCategories
+            .Select(sc => sc.id_Category)
+            .ToList(),
+
+        Chapters = story.Chapters
+            .OrderByDescending(c => c.ChapterNumber)
+            .Select(c => new StoryChapterListItemViewModel
+            {
+                ChapterId = c.id_Chapter, 
+                ChapterNumber = c.ChapterNumber,
+                ChapterName = c.ChapterName ?? string.Empty,
+                PostedAt = c.Posted_At
+            })
+            .ToList()
+    };
+
+    // 3. Truyền model vào View
+    return View(model); 
 }
 }

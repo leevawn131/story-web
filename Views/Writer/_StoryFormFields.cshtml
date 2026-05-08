@@ -12,19 +12,25 @@
 <div class="col-12 col-lg-6">
 
     <label class="form-label">Thể loại</label>
+<label class="form-label">Thể loại</label>
 
-<select asp-for="Form.SelectedCategories"
-        class="form-select"
-        multiple>
-
+<div class="row">
     @foreach (var item in Model.Categories)
     {
-        <option value="@item.CategoryId">
-            @item.CategoryName
-        </option>
+        <div class="col-12 col-md-6">
+            <div class="form-check">
+                <input class="form-check-input"
+                       type="checkbox"
+                       name="Form.SelectedCategories"
+                       value="@item.CategoryId"
+                       id="cat_@item.CategoryId" />
+                <label class="form-check-label" for="cat_@item.CategoryId">
+                    @item.CategoryName
+                </label>
+            </div>
+        </div>
     }
-
-</select>
+</div>
 </div>
 <div class="col-12 col-lg-6">
 

@@ -251,4 +251,5 @@ public class WriterStoryManageViewModel
     public string? RejectReason { get; set; }
 
     public IReadOnlyList<StoryChapterListItemViewModel> Chapters { get; set; } = Array.Empty<StoryChapterListItemViewModel>();
+    public List<int> SelectedCategories { get; set; } = new();
 }

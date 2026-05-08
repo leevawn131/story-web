@@ -23,6 +23,7 @@ public class HomeController : Controller
         var topViews = await _context.Stories
         // bảng xếp hạng yêu thích
         .AsNoTracking()
+        .Where(s => s.PostStatus == "da_duyet")
         .OrderByDescending(s => s.Views)
         .Take(5)
         .Select(s => new RankingItemViewModel
@@ -37,6 +38,7 @@ public class HomeController : Controller
         // bảng xếp hạng lượt xem
         var topFavourites = await _context.Stories
         .AsNoTracking()
+        .Where(s => s.PostStatus == "da_duyet")
         .OrderByDescending(s => _context.Favourites.Count(f => f.id_Story == s.id_Story))
         .Take(5)
         .Select(s => new RankingItemViewModel
@@ -52,6 +54,7 @@ public class HomeController : Controller
         // phần truyện mới cập nhật
         var latestUpdatedStories = await _context.Stories
         .AsNoTracking()
+        .Where(s => s.PostStatus == "da_duyet")
         .Include(s => s.Author)
             .ThenInclude(a => a!.User)
     .Include(item => item.StoryCategories)
@@ -320,6 +323,7 @@ public async Task<IActionResult> AddComment(int storyId, string content)
 
         var query = _context.Stories
             .AsNoTracking()
+            .Where(item => item.PostStatus == "da_duyet")
             .Include(item => item.Author)
             .ThenInclude(author => author!.User)
             .Include(item => item.StoryCategories)
