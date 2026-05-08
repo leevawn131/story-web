@@ -9,17 +9,45 @@
         <span asp-validation-for="Form.StoryName" class="text-danger"></span>
     </div>
 
-    <div class="col-12 col-lg-6">
-        <label asp-for="Form.CategoryId" class="form-label"></label>
-        <select asp-for="Form.CategoryId" class="form-select">
-            <option value="">Chọn thể loại</option>
-            @foreach (var category in Model.Categories)
-            {
-                <option value="@category.CategoryId">@category.CategoryName</option>
-            }
-        </select>
-        <span asp-validation-for="Form.CategoryId" class="text-danger"></span>
-    </div>
+<div class="col-12 col-lg-6">
+
+    <label class="form-label">Thể loại</label>
+
+<select asp-for="Form.SelectedCategories"
+        class="form-select"
+        multiple>
+
+    @foreach (var item in Model.Categories)
+    {
+        <option value="@item.CategoryId">
+            @item.CategoryName
+        </option>
+    }
+
+</select>
+</div>
+<div class="col-12 col-lg-6">
+
+    <label class="form-label">Tình trạng</label>
+
+    <select asp-for="Form.StoryStatus"
+            class="form-select">
+
+        <option value="dang_ra">
+            Đang ra
+        </option>
+
+        <option value="hoan_thanh">
+            Hoàn thành
+        </option>
+
+        <option value="tam_ngung">
+            Tạm ngưng
+        </option>
+
+    </select>
+
+</div>
 
     <div class="col-12 col-lg-6">
         <label asp-for="Form.ImageFile" class="form-label"></label>

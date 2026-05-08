@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Collections.Generic;
 namespace story_web.Models;
 
 [Table("Stories")]
@@ -13,7 +13,6 @@ public class Story
 
     public string? StoryName { get; set; }
 
-    public int? id_Category { get; set; }
 
     public string? Description { get; set; }
 
@@ -35,9 +34,11 @@ public class Story
 
     [ForeignKey(nameof(id_Author))]
     public Author? Author { get; set; }
-
-    [ForeignKey(nameof(id_Category))]
-    public Category? Category { get; set; }
+    public string? StoryStatus { get; set; }
+    public ICollection<StoryCategory> StoryCategories { get; set; }
+    = new List<StoryCategory>();
 
     public ICollection<Chapter> Chapters { get; set; } = [];
 }
+//dotnet tool install --global dotnet-ef
+//dotnet ef

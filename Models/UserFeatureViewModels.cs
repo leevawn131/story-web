@@ -179,8 +179,9 @@ public class StoryFormViewModel
 
     [Display(Name = "Thể loại")]
     [Required]
-    public int? CategoryId { get; set; }
+    public List<int> SelectedCategories { get; set; } = new();
 
+    public string? StoryStatus { get; set; }
     [Display(Name = "Bộ chữ truyện")]
     [DataType(DataType.Upload)]
     public IFormFile? ImageFile { get; set; }

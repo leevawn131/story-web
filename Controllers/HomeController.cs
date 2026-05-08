@@ -54,7 +54,8 @@ public class HomeController : Controller
         .AsNoTracking()
         .Include(s => s.Author)
             .ThenInclude(a => a!.User)
-        .Include(s => s.Category)
+    .Include(item => item.StoryCategories)
+        .ThenInclude(sc => sc.Category)        
         .Include(s => s.Chapters)
         .OrderByDescending(s => s.Modified_At ?? s.Posted_At)
         .Take(8)
@@ -64,7 +65,9 @@ public class HomeController : Controller
             StoryName = s.StoryName ?? "Untitled",
             ImageUrl = s.Image,
             AuthorName = s.Author!.PenName ?? s.Author.User!.UserName,
-            CategoryName = s.Category!.CategoryName,
+            CategoryName = string.Join(", ",
+                s.StoryCategories
+                    .Select(sc => sc.Category!.CategoryName)),
             ChapterCount = s.Chapters.Count,
             Views = s.Views ?? 0
         })
@@ -101,8 +104,9 @@ public class HomeController : Controller
         var story = await _context.Stories
             .AsNoTracking()
             .Include(item => item.Author)
-                .ThenInclude(author => author!.User)
-            .Include(item => item.Category)
+            .ThenInclude(author => author!.User)
+            .Include(item => item.StoryCategories)
+            .ThenInclude(sc => sc.Category)
             .Include(item => item.Chapters)
             .FirstOrDefaultAsync(item => item.id_Story == id);
 
@@ -153,7 +157,9 @@ public class HomeController : Controller
             Description = story.Description,
             ImageUrl = story.Image,
             AuthorName = story.Author?.PenName ?? story.Author?.User?.UserName ?? "Unknown author",
-            CategoryName = story.Category?.CategoryName,
+            CategoryName = string.Join(", ",
+                story.StoryCategories
+                    .Select(sc => sc.Category!.CategoryName)),
             PostStatus = story.PostStatus,
             PostedAt = story.Posted_At,
             ModifiedAt = story.Modified_At,
@@ -316,7 +322,8 @@ public async Task<IActionResult> AddComment(int storyId, string content)
             .AsNoTracking()
             .Include(item => item.Author)
             .ThenInclude(author => author!.User)
-            .Include(item => item.Category)
+            .Include(item => item.StoryCategories)
+            .ThenInclude(sc => sc.Category)
             .Include(item => item.Chapters)
             .AsQueryable();
 
@@ -329,7 +336,8 @@ public async Task<IActionResult> AddComment(int storyId, string content)
 
         if (categoryId.HasValue)
         {
-            query = query.Where(item => item.id_Category == categoryId.Value);
+        query = query.Where(item =>
+        item.StoryCategories.Any(sc => sc.id_Category == categoryId.Value));
         }
 
         var stories = await query
@@ -386,7 +394,9 @@ public async Task<IActionResult> AddComment(int storyId, string content)
                 Description = item.Description,
                 ImageUrl = item.Image,
                 AuthorName = item.Author?.PenName ?? item.Author?.User?.UserName ?? "Unknown author",
-                CategoryName = item.Category?.CategoryName,
+                CategoryName = string.Join(", ",
+                    item.StoryCategories
+                        .Select(sc => sc.Category!.CategoryName)),
                 PostStatus = item.PostStatus,
                 ChapterCount = item.Chapters.Count,
                 Views = item.Views ?? 0,

@@ -20,6 +20,7 @@ public class AppDbContext : DbContext
     public DbSet<ReadingHistory> ReadingHistories => Set<ReadingHistory>();
     public DbSet<Favourite> Favourites => Set<Favourite>();
     public DbSet<Notification> Notifications => Set<Notification>();
+    public DbSet<StoryCategory> StoryCategories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -35,12 +36,6 @@ public class AppDbContext : DbContext
             .HasOne(story => story.Author)
             .WithMany(author => author.Stories)
             .HasForeignKey(story => story.id_Author)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<Story>()
-            .HasOne(story => story.Category)
-            .WithMany(category => category.Stories)
-            .HasForeignKey(story => story.id_Category)
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Chapter>()
@@ -84,5 +79,19 @@ public class AppDbContext : DbContext
             .WithMany(user => user.Notifications)
             .HasForeignKey(notification => notification.id_User)
             .OnDelete(DeleteBehavior.Restrict);
+         modelBuilder.Entity<StoryCategory>()
+    .HasKey(sc => new { sc.id_Story, sc.id_Category });
+
+modelBuilder.Entity<StoryCategory>()
+    .HasOne(sc => sc.Story)
+    .WithMany(s => s.StoryCategories)
+    .HasForeignKey(sc => sc.id_Story)
+    .OnDelete(DeleteBehavior.Restrict);
+
+modelBuilder.Entity<StoryCategory>()
+    .HasOne(sc => sc.Category)
+    .WithMany(c => c.StoryCategories)
+    .HasForeignKey(sc => sc.id_Category)
+    .OnDelete(DeleteBehavior.Restrict);
     }
 }

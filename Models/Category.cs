@@ -14,5 +14,5 @@ public class Category
 
     public string? Description { get; set; }
 
-    public ICollection<Story> Stories { get; set; } = [];
-}
+public ICollection<StoryCategory> StoryCategories { get; set; }
+    = new List<StoryCategory>();}
