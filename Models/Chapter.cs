@@ -16,7 +16,8 @@ public class Chapter
 
     [StringLength(250)]
     public string? ChapterName { get; set; }
-
+    public string? AISummary {get;set;}
+    public string? AudioPath {get;set;}
     public DateTime? Posted_At { get; set; }
 
     public DateTime? Modified_At { get; set; }

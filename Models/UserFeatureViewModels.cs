@@ -128,6 +128,10 @@ public class ChapterReaderViewModel
 
     public string ChapterName { get; set; } = string.Empty;
 
+    public string? AISummary { get; set; }
+
+    public string? AudioUrl { get; set; }
+
     public string Content { get; set; } = string.Empty;
 
     public int? PreviousChapterId { get; set; }

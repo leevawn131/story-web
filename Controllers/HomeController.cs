@@ -219,6 +219,15 @@ public class HomeController : Controller
         var currentIndex = chapterList.FindIndex(item => item.ChapterId == chapter.id_Chapter);
         var previousChapterId = currentIndex > 0 ? chapterList[currentIndex - 1].ChapterId : default(int?);
         var nextChapterId = currentIndex >= 0 && currentIndex < chapterList.Count - 1 ? chapterList[currentIndex + 1].ChapterId : default(int?);
+        var audioFilePath = System.IO.Path.Combine(
+            Directory.GetCurrentDirectory(),
+            "wwwroot",
+            "audio",
+            $"chapter_{chapter.id_Chapter}.wav");
+
+        var audioUrl = System.IO.File.Exists(audioFilePath)
+            ? $"/audio/chapter_{chapter.id_Chapter}.wav"
+            : null;
 
         await IncrementStoryViewsAsync(chapter.id_Story.Value);
         await UpdateReadingHistoryAsync(chapter.id_Story.Value, chapter.id_Chapter);
@@ -231,11 +240,14 @@ public class HomeController : Controller
             ChapterId = chapter.id_Chapter,
             ChapterNumber = chapter.ChapterNumber,
             ChapterName = chapter.ChapterName ?? $"Chapter {chapter.ChapterNumber}",
+            AISummary = chapter.AISummary,
+            AudioUrl = audioUrl,
             Content = chapter.Content ?? string.Empty,
             PreviousChapterId = previousChapterId,
             NextChapterId = nextChapterId,
             Chapters = chapterList
         };
+
 
         return View(model);
     }

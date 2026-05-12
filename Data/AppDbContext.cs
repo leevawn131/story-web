@@ -15,7 +15,6 @@ public class AppDbContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Chapter> Chapters => Set<Chapter>();
-    public DbSet<ChapterAudio> ChapterAudios => Set<ChapterAudio>();
     public DbSet<Comment> Comments => Set<Comment>();
     public DbSet<ReadingHistory> ReadingHistories => Set<ReadingHistory>();
     public DbSet<Favourite> Favourites => Set<Favourite>();

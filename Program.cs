@@ -1,6 +1,7 @@
 using story_web.Data;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
+using story_web.Services;
 var builder = WebApplication.CreateBuilder(args);
 var dataProtectionKeysPath = Path.Combine(builder.Environment.ContentRootPath, ".aspnet", "DataProtection-Keys");
 
@@ -9,6 +10,8 @@ builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
 // Add services to the container.
+builder.Services.AddHttpClient<OllamaService>();
+builder.Services.AddScoped<PiperService>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(dataProtectionKeysPath))

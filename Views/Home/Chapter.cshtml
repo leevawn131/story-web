@@ -30,6 +30,33 @@
                     </div>
                 </div>
 
+                @if (!string.IsNullOrWhiteSpace(Model.AudioUrl))
+                {
+                    <div class="card border-0 bg-light mb-4">
+                        <div class="card-body">
+                            <div class="fw-semibold mb-2">Nghe audio chương</div>
+                            <audio controls preload="none" class="w-100">
+                                <source src="@Model.AudioUrl" type="audio/wav" />
+                                Trình duyệt của bạn không hỗ trợ phát audio.
+                            </audio>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-light border mb-4">
+                        Chương này chưa có audio.
+                    </div>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(Model.AISummary))
+                {
+                    <div class="alert alert-info border-0 mb-4">
+                        <div class="fw-semibold mb-1">Tóm tắt chương</div>
+                        <div class="lh-lg">@Html.Raw(System.Net.WebUtility.HtmlEncode(Model.AISummary).Replace("\r\n", "<br />").Replace("\n", "<br />"))</div>
+                    </div>
+                }
+
                 <article class="lh-lg fs-5">
                     @Html.Raw(System.Net.WebUtility.HtmlEncode(Model.Content).Replace("\r\n", "<br />").Replace("\n", "<br />"))
                 </article>

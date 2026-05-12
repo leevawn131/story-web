@@ -40,6 +40,8 @@ _ReSharper*/
 *.DotSettings.user
 
 # Runtime and local settings
+appsettings.json
+appsettings.*.json
 appsettings.Local.json
 appsettings.*.local.json
 
@@ -54,5 +56,4 @@ publish/
 .DS_Store
 Thumbs.db
 desktop.ini
-appsettings.json
 

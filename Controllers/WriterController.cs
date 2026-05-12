@@ -4,6 +4,7 @@ using story_web.Data;
 using story_web.Extensions;
 using story_web.Filters;
 using story_web.Models;
+using story_web.Services;
 
 namespace story_web.Controllers;
 
@@ -11,10 +12,14 @@ namespace story_web.Controllers;
 public class WriterController : Controller
 {
     private readonly AppDbContext _context;
+    private readonly OllamaService _ollamaService;
+    private readonly PiperService _piperService;
 
-    public WriterController(AppDbContext context)
+    public WriterController(AppDbContext context, OllamaService ollamaService, PiperService piperService)
     {
         _context = context;
+        _ollamaService = ollamaService;
+        _piperService = piperService;
     }
 
     public IActionResult Index()
@@ -390,6 +395,54 @@ public class WriterController : Controller
         return RedirectToAction(nameof(Stories));
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteStory(int id)
+    {
+        if (!await HasRegisteredAuthorAsync())
+        {
+            TempData["InfoMessage"] =
+                "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
+
+            return RedirectToAction(nameof(RegisterAuthor));
+        }
+
+        var story = await GetOwnedStoryAsync(id, trackChanges: true);
+        if (story is null)
+        {
+            return NotFound();
+        }
+
+        var readingHistories = await _context.ReadingHistories
+            .Where(item => item.id_Story == story.id_Story ||
+                           (item.id_Story == story.id_Story))
+            .ToListAsync();
+
+        var favourites = await _context.Favourites
+            .Where(item => item.id_Story == story.id_Story)
+            .ToListAsync();
+
+        var comments = await _context.Comments
+            .Where(item => item.id_Story == story.id_Story)
+            .ToListAsync();
+
+        var storyCategories = await _context.StoryCategories
+            .Where(item => item.id_Story == story.id_Story)
+            .ToListAsync();
+
+        _context.ReadingHistories.RemoveRange(readingHistories);
+        _context.Favourites.RemoveRange(favourites);
+        _context.Comments.RemoveRange(comments);
+        _context.StoryCategories.RemoveRange(storyCategories);
+        _context.Chapters.RemoveRange(story.Chapters);
+        _context.Stories.Remove(story);
+
+        await _context.SaveChangesAsync();
+
+        TempData["SuccessMessage"] = "Truyện đã được xóa thành công.";
+        return RedirectToAction(nameof(Stories));
+    }
+
     private async Task<WriterStoryEditorViewModel>
         BuildStoryEditorAsync(
             string title,
@@ -468,6 +521,227 @@ public class WriterController : Controller
 
         return await query.FirstOrDefaultAsync();
     }
+    private async Task<Chapter?> GetOwnedChapterAsync(int chapterId, bool trackChanges = false)
+    {
+        var currentUserId =
+            HttpContext.Session.GetCurrentUserId()!.Value;
+
+        IQueryable<Chapter> query = _context.Chapters
+            .Include(item => item.Story)
+                .ThenInclude(story => story!.Author)
+            .Where(item =>
+                item.id_Chapter == chapterId &&
+                item.Story != null &&
+                item.Story.Author != null &&
+                item.Story.Author.id_User == currentUserId);
+
+        if (!trackChanges)
+        {
+            query = query.AsNoTracking();
+        }
+
+        return await query.FirstOrDefaultAsync();
+    }
+
+    private async Task<bool> HasDuplicateChapterNumberAsync(int storyId, decimal? chapterNumber, int? ignoredChapterId = null)
+    {
+        if (!chapterNumber.HasValue)
+        {
+            return false;
+        }
+
+        return await _context.Chapters.AnyAsync(item =>
+            item.id_Story == storyId &&
+            item.ChapterNumber == chapterNumber &&
+            (!ignoredChapterId.HasValue || item.id_Chapter != ignoredChapterId.Value));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> CreateChapter(int storyId)
+    {
+        if (!await HasRegisteredAuthorAsync())
+        {
+            TempData["InfoMessage"] =
+                "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
+
+            return RedirectToAction(nameof(RegisterAuthor));
+        }
+
+        var story = await GetOwnedStoryAsync(storyId);
+        if (story is null)
+        {
+            return NotFound();
+        }
+
+        return View("ChapterForm", new ChapterFormViewModel
+        {
+            StoryId = story.id_Story,
+            StoryName = story.StoryName ?? "Untitled story"
+        });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateChapter(ChapterFormViewModel model)
+    {
+        if (!await HasRegisteredAuthorAsync())
+        {
+            TempData["InfoMessage"] =
+                "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
+
+            return RedirectToAction(nameof(RegisterAuthor));
+        }
+
+        var story = await GetOwnedStoryAsync(model.StoryId, trackChanges: true);
+        if (story is null)
+        {
+            return NotFound();
+        }
+
+        model.StoryName = story.StoryName ?? "Untitled story";
+
+        if (await HasDuplicateChapterNumberAsync(model.StoryId, model.ChapterNumber))
+        {
+            ModelState.AddModelError(nameof(model.ChapterNumber), "Số chương này đã tồn tại cho truyện.");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return View("ChapterForm", model);
+        }
+
+        var chapter = new Chapter
+        {
+            id_Story = story.id_Story,
+            ChapterNumber = model.ChapterNumber,
+            ChapterName = model.ChapterName?.Trim(),
+            Content = model.Content?.Trim(),
+            Posted_At = DateTime.UtcNow,
+            Modified_At = DateTime.UtcNow
+        };
+
+        _context.Chapters.Add(chapter);
+        story.Modified_At = DateTime.UtcNow;
+
+        AddNotification(HttpContext.Session.GetCurrentUserId()!.Value, $"Chương \"{chapter.ChapterName}\" đã được thêm vào \"{story.StoryName}\".");
+        await _context.SaveChangesAsync();
+
+        chapter.AISummary = await _ollamaService.SummarizeAsync(chapter.Content ?? string.Empty);
+        await _context.SaveChangesAsync();
+
+        chapter.AudioPath = await _piperService.GenerateAudioAsync(chapter.Content ?? string.Empty, chapter.id_Chapter);
+        await _context.SaveChangesAsync();
+
+        TempData["SuccessMessage"] = "Chương đã được tạo thành công.";
+        return RedirectToAction(nameof(Chapters), new { storyId = story.id_Story });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> EditChapter(int id)
+    {
+        if (!await HasRegisteredAuthorAsync())
+        {
+            TempData["InfoMessage"] =
+                "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
+
+            return RedirectToAction(nameof(RegisterAuthor));
+        }
+
+        var chapter = await GetOwnedChapterAsync(id);
+        if (chapter is null || chapter.Story is null)
+        {
+            return NotFound();
+        }
+
+        return View("ChapterForm", new ChapterFormViewModel
+        {
+            ChapterId = chapter.id_Chapter,
+            StoryId = chapter.id_Story ?? 0,
+            StoryName = chapter.Story.StoryName ?? "Untitled story",
+            ChapterNumber = chapter.ChapterNumber,
+            ChapterName = chapter.ChapterName ?? string.Empty,
+            Content = chapter.Content ?? string.Empty
+        });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditChapter(int id, ChapterFormViewModel model)
+    {
+        if (!await HasRegisteredAuthorAsync())
+        {
+            TempData["InfoMessage"] =
+                "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
+
+            return RedirectToAction(nameof(RegisterAuthor));
+        }
+
+        var chapter = await GetOwnedChapterAsync(id, trackChanges: true);
+        if (chapter is null || chapter.Story is null || !chapter.id_Story.HasValue)
+        {
+            return NotFound();
+        }
+
+        model.StoryId = chapter.id_Story.Value;
+        model.ChapterId = id;
+        model.StoryName = chapter.Story.StoryName ?? "Untitled story";
+
+        if (await HasDuplicateChapterNumberAsync(model.StoryId, model.ChapterNumber, id))
+        {
+            ModelState.AddModelError(nameof(model.ChapterNumber), "Số chương này đã tồn tại cho truyện.");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return View("ChapterForm", model);
+        }
+
+        chapter.ChapterNumber = model.ChapterNumber;
+        chapter.ChapterName = model.ChapterName?.Trim();
+        chapter.Content = model.Content?.Trim();
+        chapter.Modified_At = DateTime.UtcNow;
+        chapter.Story.Modified_At = DateTime.UtcNow;
+
+        AddNotification(HttpContext.Session.GetCurrentUserId()!.Value, $"Chương \"{chapter.ChapterName}\" đã được cập nhật.");
+        await _context.SaveChangesAsync();
+
+        TempData["SuccessMessage"] = "Chương đã được cập nhật thành công.";
+        return RedirectToAction(nameof(Chapters), new { storyId = model.StoryId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteChapter(int id)
+    {
+        if (!await HasRegisteredAuthorAsync())
+        {
+            TempData["InfoMessage"] =
+                "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
+
+            return RedirectToAction(nameof(RegisterAuthor));
+        }
+
+        var chapter = await GetOwnedChapterAsync(id, trackChanges: true);
+        if (chapter is null || chapter.Story is null || !chapter.id_Story.HasValue)
+        {
+            return NotFound();
+        }
+
+        var chapterReadingHistory = await _context.ReadingHistories
+            .Where(item => item.id_Chapter == chapter.id_Chapter)
+            .ToListAsync();
+        _context.ReadingHistories.RemoveRange(chapterReadingHistory);
+
+        _context.Chapters.Remove(chapter);
+        chapter.Story.Modified_At = DateTime.UtcNow;
+
+        AddNotification(HttpContext.Session.GetCurrentUserId()!.Value, $"Chương \"{chapter.ChapterName}\" đã bị xóa.");
+        await _context.SaveChangesAsync();
+
+        TempData["SuccessMessage"] = "Chương đã được xóa thành công.";
+        return RedirectToAction(nameof(Chapters), new { storyId = chapter.id_Story.Value });
+    }
+
     private async Task<string?> SaveUploadedImageAsync(IFormFile? file)
     {
         if (file is null || file.Length == 0)
