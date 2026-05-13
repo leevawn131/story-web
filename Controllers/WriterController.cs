@@ -626,6 +626,41 @@ public class WriterController : Controller
         AddNotification(HttpContext.Session.GetCurrentUserId()!.Value, $"Chương \"{chapter.ChapterName}\" đã được thêm vào \"{story.StoryName}\".");
         await _context.SaveChangesAsync();
 
+        // Notify users who favourited this story (use existing Favourites table).
+        try
+        {
+            int? currentUserId = HttpContext.Session.GetCurrentUserId();
+
+            var favouriteUserIds = await _context.Favourites
+                .Where(f => f.id_Story == story.id_Story && f.id_User.HasValue)
+                .Select(f => f.id_User!.Value)
+                .Distinct()
+                .ToListAsync();
+
+            foreach (var favUserId in favouriteUserIds)
+            {
+                // don't notify the actor who created the chapter
+                if (currentUserId.HasValue && favUserId == currentUserId.Value)
+                {
+                    continue;
+                }
+
+                _context.Notifications.Add(new Notification
+                {
+                    id_User = favUserId,
+                    Content = $"Tác giả {story.Author?.PenName ?? "tác giả"} vừa thêm chương mới \"{chapter.ChapterName}\" vào \"{story.StoryName}\".",
+                    IsRead = false,
+                    Created_At = DateTime.UtcNow
+                });
+            }
+
+            await _context.SaveChangesAsync();
+        }
+        catch
+        {
+            // swallow any notification errors to avoid blocking chapter creation
+        }
+
         chapter.AISummary = await _ollamaService.SummarizeAsync(chapter.Content ?? string.Empty);
         await _context.SaveChangesAsync();
 

@@ -60,15 +60,37 @@ namespace story_web.Services
                 prompt = promt,
                 stream = false
             };
+
             var json = JsonSerializer.Serialize(requestBody);
-            var response = await _httpClient.PostAsync(
-                "http://localhost:11434/api/generate",
-                new StringContent(json,Encoding.UTF8, "application/json")
-            );
-            response.EnsureSuccessStatusCode();
-            var responseText = await response.Content.ReadAsStringAsync();
-            using var doc = JsonDocument.Parse(responseText);
-            return doc.RootElement.GetProperty("response").GetString() ?? string.Empty;
+
+            try
+            {
+                var response = await _httpClient.PostAsync(
+                    "http://localhost:11434/api/generate",
+                    new StringContent(json, Encoding.UTF8, "application/json")
+                );
+
+                response.EnsureSuccessStatusCode();
+                var responseText = await response.Content.ReadAsStringAsync();
+                using var doc = JsonDocument.Parse(responseText);
+                return doc.RootElement.GetProperty("response").GetString() ?? string.Empty;
+            }
+            catch (HttpRequestException ex)
+            {
+                // Ollama server is unavailable or connection refused. Log and return empty summary.
+                Console.Error.WriteLine($"Ollama request failed: {ex.Message}");
+                return string.Empty;
+            }
+            catch (System.Net.Sockets.SocketException ex)
+            {
+                Console.Error.WriteLine($"Ollama socket error: {ex.Message}");
+                return string.Empty;
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Ollama unexpected error: {ex.Message}");
+                return string.Empty;
+            }
         }
         private List<string> SplitText(string text, int chunksize)
         {
