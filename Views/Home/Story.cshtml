@@ -50,7 +50,17 @@
                         </div>
 
                         <h1 class="h2 mb-2">@Model.StoryName</h1>
-                        <p class="text-muted mb-3">Bởi @(string.IsNullOrWhiteSpace(Model.AuthorName) ? "Tác giả không xác định" : Model.AuthorName)</p>
+                        <div class="mb-3">
+                            @if (Model.IsOriginal)
+                            {
+                                <p class="text-muted mb-1"><i class="fas fa-pen-nib"></i> <strong>Tác giả:</strong> @(string.IsNullOrWhiteSpace(Model.AuthorName) ? "Tác giả không xác định" : Model.AuthorName) <span class="badge bg-success">Tự sáng tác</span></p>
+                            }
+                            else
+                            {
+                                <p class="text-muted mb-1"><i class="fas fa-pen-nib"></i> <strong>Tác giả gốc:</strong> @Model.OriginalAuthor</p>
+                                <p class="text-muted mb-1"><i class="fas fa-user-edit"></i> <strong>Người đăng:</strong> @Model.AuthorName <span class="badge bg-secondary">Sưu tầm</span></p>
+                            }
+                        </div>
 
                         <div class="row row-cols-2 row-cols-lg-4 g-3 mb-4">
                             <div class="col">

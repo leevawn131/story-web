@@ -72,12 +72,56 @@
     }
 
     <div class="col-12">
+        <label class="form-label">Nguồn gốc truyện</label>
+        <div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" asp-for="Form.IsOriginal" value="true" id="isOriginalTrue">
+                <label class="form-check-label" for="isOriginalTrue">Tự sáng tác</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" asp-for="Form.IsOriginal" value="false" id="isOriginalFalse">
+                <label class="form-check-label" for="isOriginalFalse">Sưu tầm / Dịch</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12" id="originalAuthorGroup" style="display: none;">
+        <label asp-for="Form.OriginalAuthor" class="form-label">Tên tác giả gốc <span class="text-danger">*</span></label>
+        <input asp-for="Form.OriginalAuthor" class="form-control" id="originalAuthorInput" placeholder="Nhập tên tác giả của bộ truyện này..." />
+        <span asp-validation-for="Form.OriginalAuthor" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
         <label asp-for="Form.Description" class="form-label"></label>
         <small class="d-block text-muted mb-2">Tóm tắt xuất hiện trên trang chủ</small>
         <textarea asp-for="Form.Description" class="form-control" rows="6" placeholder="Mô tả ngắn về truyện của bạn..."></textarea>
         <span asp-validation-for="Form.Description" class="text-danger"></span>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function toggleOriginalAuthor() {
+            var isSưuTầm = document.getElementById('isOriginalFalse').checked;
+            var group = document.getElementById('originalAuthorGroup');
+            if (isSưuTầm) {
+                group.style.display = 'block';
+            } else {
+                group.style.display = 'none';
+                document.getElementById('originalAuthorInput').value = '';
+            }
+        }
+        
+        // Initial state
+        toggleOriginalAuthor();
+
+        // Bind events
+        var radios = document.querySelectorAll('input[name="Form.IsOriginal"]');
+        radios.forEach(function (r) {
+            r.addEventListener('change', toggleOriginalAuthor);
+        });
+    });
+</script>
 
 <div class="d-flex flex-wrap gap-2 mt-4">
     <button type="submit" class="btn btn-primary">Lưu truyện</button>

@@ -183,6 +183,15 @@ public class WriterController : Controller
             return RedirectToAction(nameof(RegisterAuthor));
         }
 
+        if (!model.IsOriginal && string.IsNullOrWhiteSpace(model.OriginalAuthor))
+        {
+            ModelState.AddModelError("Form.OriginalAuthor", "Vui lòng nhập tên tác giả gốc cho truyện sưu tầm/dịch.");
+        }
+        if (model.IsOriginal)
+        {
+            model.OriginalAuthor = null;
+        }
+
         if (!ModelState.IsValid)
         {
             return View("StoryForm",
@@ -216,6 +225,10 @@ public class WriterController : Controller
             StoryName = model.StoryName.Trim(),
 
             StoryStatus = model.StoryStatus,
+            
+            IsOriginal = model.IsOriginal,
+            
+            OriginalAuthor = model.OriginalAuthor?.Trim(),
 
             Image = imagePath,
 
@@ -288,6 +301,10 @@ public class WriterController : Controller
                 .ToList(),
 
             StoryStatus = story.StoryStatus,
+            
+            IsOriginal = story.IsOriginal,
+            
+            OriginalAuthor = story.OriginalAuthor,
 
             CurrentImage = story.Image,
 
@@ -316,6 +333,15 @@ public class WriterController : Controller
             return RedirectToAction(nameof(RegisterAuthor));
         }
 
+        if (!model.IsOriginal && string.IsNullOrWhiteSpace(model.OriginalAuthor))
+        {
+            ModelState.AddModelError("Form.OriginalAuthor", "Vui lòng nhập tên tác giả gốc cho truyện sưu tầm/dịch.");
+        }
+        if (model.IsOriginal)
+        {
+            model.OriginalAuthor = null;
+        }
+
         if (!ModelState.IsValid)
         {
             model.StoryId = id;
@@ -338,6 +364,10 @@ public class WriterController : Controller
         story.StoryName = model.StoryName.Trim();
 
         story.StoryStatus = model.StoryStatus;
+        
+        story.IsOriginal = model.IsOriginal;
+        
+        story.OriginalAuthor = model.OriginalAuthor?.Trim();
 
         if (model.ImageFile is not null)
         {

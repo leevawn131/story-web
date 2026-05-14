@@ -48,7 +48,16 @@
         {
             <tr>
                 <td>@s.StoryName</td>
-                <td>@s.Author?.PenName</td>
+                <td>
+                    @if (s.IsOriginal)
+                    {
+                        <span>@s.Author?.PenName <br><small class="text-success">(Tự sáng tác)</small></span>
+                    }
+                    else
+                    {
+                        <span>@s.OriginalAuthor <br><small class="text-muted">(Đăng bởi: @s.Author?.PenName)</small></span>
+                    }
+                </td>
                 <td>@(s.Description?.Substring(0, Math.Min(50, s.Description.Length)) ?? "N/A")...</td>
                 <td>
                     @if (s.PostStatus == "cho_duyet")

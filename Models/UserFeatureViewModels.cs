@@ -91,6 +91,10 @@ public class StoryDetailsViewModel
 
     public string? AuthorName { get; set; }
 
+    public bool IsOriginal { get; set; } = true;
+    
+    public string? OriginalAuthor { get; set; }
+
     public string? CategoryName { get; set; }
 
     public string? PostStatus { get; set; }
@@ -196,6 +200,13 @@ public class StoryFormViewModel
     [Required]
     [StringLength(4000, MinimumLength = 20)]
     public string? Description { get; set; }
+
+    [Display(Name = "Nguồn truyện")]
+    public bool IsOriginal { get; set; } = true;
+
+    [Display(Name = "Tên tác giả gốc")]
+    [StringLength(150, ErrorMessage = "Tên tác giả gốc không được vượt quá 150 ký tự")]
+    public string? OriginalAuthor { get; set; }
 }
 
 public class WriterStoryListItemViewModel

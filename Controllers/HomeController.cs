@@ -160,6 +160,8 @@ public class HomeController : Controller
             Description = story.Description,
             ImageUrl = story.Image,
             AuthorName = story.Author?.PenName ?? story.Author?.User?.UserName ?? "Unknown author",
+            IsOriginal = story.IsOriginal,
+            OriginalAuthor = story.OriginalAuthor,
             CategoryName = string.Join(", ",
                 story.StoryCategories
                     .Select(sc => sc.Category!.CategoryName)),

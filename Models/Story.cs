@@ -39,6 +39,12 @@ public class Story
     = new List<StoryCategory>();
 
     public ICollection<Chapter> Chapters { get; set; } = [];
+    [Display(Name = "Nguồn truyện")]
+    public bool IsOriginal { get; set; } = true;
+    [Display(Name = "Tên tác giả gốc")]
+    [StringLength(150, ErrorMessage = "Tên tác giả gốc không được vượt quá 150 ký tự")]
+    public string? OriginalAuthor { get; set; }
+
 }
 //dotnet tool install --global dotnet-ef
 //dotnet ef
