@@ -1,0 +1,77 @@
+@model List<story_web.Models.Membership>
+
+@{
+    ViewData["Title"] = "Membership Plans";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1 class="h3 mb-4 text-gray-800">Quản lý hội viên</h1>
+
+<!-- Tabs -->
+<ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+        <a class="nav-link"
+           asp-area="Admin"
+           asp-controller="Memberships"
+           asp-action="Users">
+            Hội viên
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active"
+           asp-area="Admin"
+           asp-controller="Memberships"
+           asp-action="Plans">
+            Loại hội viên
+        </a>
+    </li>
+</ul>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-primary">Danh sách loại hội viên</h6>
+        <a class="btn btn-sm btn-primary" asp-area="Admin" asp-controller="Membership" asp-action="CreatePlan">Tạo mới</a>
+    </div>
+
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" width="100%">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên</th>
+                        <th>Giá</th>
+                        <th>Thời gian (ngày)</th>
+                        <th>Mô tả</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var p in Model)
+                        {
+                            <tr>
+                                <td>@p.id_Membership</td>
+                                <td>@p.Name</td>
+                                <td>@p.Price.ToString("N0")</td>
+                                <td>@p.Duration</td>
+                                <td>@p.Description</td>
+                                <td>
+                                    <a class="btn btn-sm btn-warning" asp-area="Admin" asp-controller="Membership" asp-action="EditPlans" asp-route-id="@p.id_Membership">Sửa</a>
+                                    <a class="btn btn-sm btn-danger" asp-area="Admin" asp-controller="Membership" asp-action="DeletePlans" asp-route-id="@p.id_Membership">Xoá</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center">Chưa có loại hội viên.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

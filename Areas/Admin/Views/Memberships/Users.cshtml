@@ -1,0 +1,106 @@
+@model List<story_web.Models.UserMembership>
+
+@{
+    ViewData["Title"] = "Membership Management";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1 class="h3 mb-4 text-gray-800">Quản lý hội viên</h1>
+
+<!-- Tabs -->
+<ul class="nav nav-tabs mb-4">
+    <!-- Tab hiện tại -->
+    <li class="nav-item">
+        <a class="nav-link active"
+           asp-area="Admin"
+           asp-controller="Memberships"
+           asp-action="Users">
+            Hội viên
+        </a>
+    </li>
+
+    <!-- Tab chuyển sang quản lý gói -->
+    <li class="nav-item">
+        <a class="nav-link"
+           asp-area="Admin"
+           asp-controller="Memberships"
+           asp-action="Plans">
+            Loại hội viên
+        </a>
+    </li>
+</ul>
+
+<!-- Card -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">
+            Danh sách hội viên
+        </h6>
+    </div>
+
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" width="100%">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Gói hội viên</th>
+                        <th>Ngày bắt đầu</th>
+                        <th>Ngày kết thúc</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.id</td>
+                                <td>@item.User?.UserName</td>
+                                <td>@item.Membership?.Name</td>
+                                <td>@item.StartDate.ToString("dd/MM/yyyy")</td>
+                                <td>@item.EndDate.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @if (item.Status == "active")
+                                    {
+                                        <span class="badge badge-success">
+                                            Active
+                                        </span>
+                                    }
+                                    else if (item.Status == "expired")
+                                    {
+                                        <span class="badge badge-secondary">
+                                            Expired
+                                        </span>
+                                    }
+                                    else if (item.Status == "pending")
+                                    {
+                                        <span class="badge badge-warning">
+                                            Pending
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-danger">
+                                            @item.Status
+                                        </span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center">
+                                Chưa có dữ liệu hội viên.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -20,6 +20,9 @@ public class AppDbContext : DbContext
     public DbSet<Favourite> Favourites => Set<Favourite>();
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<StoryCategory> StoryCategories { get; set; }
+    public DbSet<Membership> Memberships {get;set;}
+    public DbSet<Payment> Payments {get;set;}
+    public DbSet<UserMembership> UserMemberships {get;set;}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
