@@ -1,0 +1,45 @@
+@model story_web.Models.Membership
+
+@{
+    ViewData["Title"] = "Sửa loại hội viên";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1 class="h3 mb-4 text-gray-800">Cập nhật loại hội viên</h1>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Thông tin gói hội viên</h6>
+    </div>
+    <div class="card-body">
+        <form asp-action="EditPlans" method="post">
+            <input type="hidden" asp-for="id_Membership" />
+            
+            <div class="form-group">
+                <label asp-for="Name">Tên gói</label>
+                <input asp-for="Name" class="form-control" required />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price">Giá (VNĐ)</label>
+                <input asp-for="Price" class="form-control" type="number" min="0" required />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Duration">Thời hạn (Ngày)</label>
+                <input asp-for="Duration" class="form-control" type="number" min="1" required />
+                <span asp-validation-for="Duration" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description">Mô tả (Mỗi đặc quyền 1 dòng)</label>
+                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Cập nhật</button>
+                <a asp-action="Plans" class="btn btn-secondary">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>

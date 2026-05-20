@@ -43,6 +43,15 @@ namespace story_web.Areas.Admin.Controllers
             }
             return View(model);
         }
+        public IActionResult EditPlans(int id)
+        {
+            var plan = _context.Memberships.Find(id);
+            if (plan == null) return NotFound();
+            return View(plan);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult EditPlans(Membership model)
         {
             if (ModelState.IsValid)

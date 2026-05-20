@@ -1,0 +1,26 @@
+@model story_web.Models.Membership
+
+@{
+    ViewData["Title"] = "Xóa loại hội viên";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1 class="h3 mb-4 text-gray-800">Xóa loại hội viên</h1>
+
+<div class="card shadow mb-4 border-bottom-danger">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-danger">Xác nhận xóa</h6>
+    </div>
+    <div class="card-body">
+        <p>Bạn có chắc chắn muốn xóa gói hội viên <strong>@Model.Name</strong> không?</p>
+        <p class="text-muted">Hành động này không thể hoàn tác.</p>
+        
+        <form asp-action="DeletePlan" method="post">
+            <input type="hidden" name="id" value="@Model.id_Membership" />
+            <div class="mt-4">
+                <button type="submit" class="btn btn-danger">Xóa luôn</button>
+                <a asp-action="Plans" class="btn btn-secondary">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>

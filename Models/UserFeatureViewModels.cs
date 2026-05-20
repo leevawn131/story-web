@@ -143,6 +143,8 @@ public class ChapterReaderViewModel
     public int? NextChapterId { get; set; }
 
     public IReadOnlyList<StoryChapterListItemViewModel> Chapters { get; set; } = Array.Empty<StoryChapterListItemViewModel>();
+    
+    public bool HasMembership { get; set; }
 }
 
 public class LibraryPageViewModel

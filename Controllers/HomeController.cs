@@ -178,6 +178,14 @@ public class HomeController : Controller
         await IncrementStoryViewsAsync(chapter.id_Story.Value);
         await UpdateReadingHistoryAsync(chapter.id_Story.Value, chapter.id_Chapter);
 
+        var currentUserId = HttpContext.Session.GetCurrentUserId();
+        var hasMembership = false;
+        if (currentUserId.HasValue)
+        {
+            hasMembership = await _context.UserMemberships
+                .AnyAsync(m => m.id_User == currentUserId.Value && m.EndDate > DateTime.Now);
+        }
+
         var model = new ChapterReaderViewModel
         {
             StoryId = chapter.id_Story.Value,
@@ -191,7 +199,8 @@ public class HomeController : Controller
             Content = chapter.Content ?? string.Empty,
             PreviousChapterId = previousChapterId,
             NextChapterId = nextChapterId,
-            Chapters = chapterList
+            Chapters = chapterList,
+            HasMembership = hasMembership
         };
 
 

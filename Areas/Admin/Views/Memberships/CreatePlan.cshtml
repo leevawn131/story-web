@@ -1,0 +1,43 @@
+@model story_web.Models.Membership
+
+@{
+    ViewData["Title"] = "Thêm loại hội viên";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1 class="h3 mb-4 text-gray-800">Thêm loại hội viên mới</h1>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Thông tin gói hội viên</h6>
+    </div>
+    <div class="card-body">
+        <form asp-action="CreatePlan" method="post">
+            <div class="form-group">
+                <label asp-for="Name">Tên gói</label>
+                <input asp-for="Name" class="form-control" placeholder="Ví dụ: Gói VIP 1 Tháng" required />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price">Giá (VNĐ)</label>
+                <input asp-for="Price" class="form-control" type="number" min="0" required />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Duration">Thời hạn (Ngày)</label>
+                <input asp-for="Duration" class="form-control" type="number" min="1" placeholder="Ví dụ: 30" required />
+                <span asp-validation-for="Duration" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description">Mô tả (Mỗi đặc quyền 1 dòng)</label>
+                <textarea asp-for="Description" class="form-control" rows="4" placeholder="Ví dụ:&#10;Không quảng cáo&#10;Đọc trước chương mới"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Lưu lại</button>
+                <a asp-action="Plans" class="btn btn-secondary">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>
