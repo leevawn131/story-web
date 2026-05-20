@@ -71,8 +71,11 @@ namespace story_web.Areas.Admin.Controllers
         public IActionResult DeleteConfirmed(int id_Category)
         {
             var c = _context.Categories.Find(id_Category);
-            _context.Categories.Remove(c);
-            _context.SaveChanges();
+            if (c != null)
+            {
+                _context.Categories.Remove(c);
+                _context.SaveChanges();
+            }
             return RedirectToAction("Index");
         }
     }
