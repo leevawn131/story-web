@@ -11,6 +11,7 @@ namespace story_web.Controllers;
 public class HomeController : Controller
 {
     private readonly AppDbContext _context;
+    private const string ApprovedStatus = "da_duyet";
 
     public HomeController(AppDbContext context)
     {
@@ -20,71 +21,15 @@ public class HomeController : Controller
     public async Task<IActionResult> Index(string? searchTerm = null, int? categoryId = null)
     {
         var model = await BuildHomeIndexViewModelAsync(searchTerm, categoryId, "Kho truyện");
-        var topViews = await _context.Stories
-        // bảng xếp hạng yêu thích
-        .AsNoTracking()
-        .Where(s => s.PostStatus == "da_duyet")
-        .OrderByDescending(s => s.Views)
-        .Take(5)
-        .Select(s => new RankingItemViewModel
-        {
-            StoryId = s.id_Story,
-            StoryName = s.StoryName!,
-            ImageUrl = s.Image,
-            Views = s.Views ?? 0,
-            FavouriteCount = _context.Favourites.Count(f => f.id_Story == s.id_Story)
-        })
-        .ToListAsync();
-        // bảng xếp hạng lượt xem
-        var topFavourites = await _context.Stories
-        .AsNoTracking()
-        .Where(s => s.PostStatus == "da_duyet")
-        .OrderByDescending(s => _context.Favourites.Count(f => f.id_Story == s.id_Story))
-        .Take(5)
-        .Select(s => new RankingItemViewModel
-        {
-            StoryId = s.id_Story,
-            StoryName = s.StoryName!,
-            ImageUrl = s.Image,
-            Views = s.Views ?? 0,
-            FavouriteCount = _context.Favourites.Count(f => f.id_Story == s.id_Story)
-        })
-        
-        .ToListAsync();
-        // phần truyện mới cập nhật
-        var latestUpdatedStories = await _context.Stories
-        .AsNoTracking()
-        .Where(s => s.PostStatus == "da_duyet")
-        .Include(s => s.Author)
-            .ThenInclude(a => a!.User)
-    .Include(item => item.StoryCategories)
-        .ThenInclude(sc => sc.Category)        
-        .Include(s => s.Chapters)
-        .OrderByDescending(s => s.Modified_At ?? s.Posted_At)
-        .Take(8)
-        .Select(s => new StoryCardViewModel
-        {
-            StoryId = s.id_Story,
-            StoryName = s.StoryName ?? "Untitled",
-            ImageUrl = s.Image,
-            AuthorName = s.Author!.PenName ?? s.Author.User!.UserName,
-            CategoryName = string.Join(", ",
-                s.StoryCategories
-                    .Select(sc => sc.Category!.CategoryName)),
-            ChapterCount = s.Chapters.Count,
-            Views = s.Views ?? 0
-        })
-        .ToListAsync();
-        model.LatestUpdatedStories = latestUpdatedStories;
-        model.TopViews = topViews;
-        model.TopFavourites = topFavourites;
+        model.TopViews = await GetTopViewedStoriesAsync();
+        model.TopFavourites = await GetTopFavouriteStoriesAsync();
+        model.LatestUpdatedStories = await GetLatestUpdatedStoriesAsync();
         return View(model);
     }
 
     public IActionResult Privacy()
     {
         return View();
-
     }
 
     public async Task<IActionResult> Category(int id)
@@ -141,17 +86,17 @@ public class HomeController : Controller
             .CountAsync(item => item.id_Story == id);
         //phần bình luận
         var comments = await _context.Comments
-    .Where(c => c.id_Story == id)
-    .Include(c => c.User)
-    .OrderByDescending(c => c.Posted_At)
-    .Select(c => new CommentItemViewModel
-    {
-        CommentId = c.id_Comment,
-        UserName = c.User!.UserName ?? "Ẩn danh",
-        Content = c.Content,
-        PostedAt = c.Posted_At
-    })
-    .ToListAsync();
+            .Where(c => c.id_Story == id)
+            .Include(c => c.User)
+            .OrderByDescending(c => c.Posted_At)
+            .Select(c => new CommentItemViewModel
+            {
+                CommentId = c.id_Comment,
+                UserName = c.User!.UserName ?? "Ẩn danh",
+                Content = c.Content,
+                PostedAt = c.Posted_At
+            })
+            .ToListAsync();
 
         var model = new StoryDetailsViewModel
         {
@@ -184,8 +129,7 @@ public class HomeController : Controller
                     PostedAt = item.Posted_At
                 })
                 .ToList(),
-                Comments = comments
-
+                    Comments = comments
         };
 
         return View(model);
@@ -254,26 +198,28 @@ public class HomeController : Controller
         return View(model);
     }
     [HttpPost]
-[ValidateAntiForgeryToken]
-public async Task<IActionResult> AddComment(int storyId, string content)
-{
-    var userId = HttpContext.Session.GetCurrentUserId();
-    if (!userId.HasValue)
-        return RedirectToAction("Login", "Account");
-
-    var comment = new Comment
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddComment(int storyId, string content)
     {
-        id_Story = storyId,
-        id_User = userId.Value,
-        Content = content,
-        Posted_At = DateTime.Now
-    };
+        var userId = HttpContext.Session.GetCurrentUserId();
+        if (!userId.HasValue)
+        {
+            return RedirectToAction("Login", "Account");
+        }
 
-    _context.Comments.Add(comment);
-    await _context.SaveChangesAsync();
+        var comment = new Comment
+        {
+            id_Story = storyId,
+            id_User = userId.Value,
+            Content = content,
+            Posted_At = DateTime.Now
+        };
 
-    return RedirectToAction("Story", new { id = storyId });
-}
+        _context.Comments.Add(comment);
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction("Story", new { id = storyId });
+    }
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Auth]
@@ -337,7 +283,7 @@ public async Task<IActionResult> AddComment(int storyId, string content)
 
         var query = _context.Stories
             .AsNoTracking()
-            .Where(item => item.PostStatus == "da_duyet")
+            .Where(item => item.PostStatus == ApprovedStatus)
             .Include(item => item.Author)
             .ThenInclude(author => author!.User)
             .Include(item => item.StoryCategories)
@@ -354,8 +300,8 @@ public async Task<IActionResult> AddComment(int storyId, string content)
 
         if (categoryId.HasValue)
         {
-        query = query.Where(item =>
-        item.StoryCategories.Any(sc => sc.id_Category == categoryId.Value));
+            query = query.Where(item =>
+                item.StoryCategories.Any(sc => sc.id_Category == categoryId.Value));
         }
 
         var stories = await query
@@ -463,5 +409,68 @@ public async Task<IActionResult> AddComment(int storyId, string content)
         history.Last_Read_At = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
+    }
+
+    private async Task<List<RankingItemViewModel>> GetTopViewedStoriesAsync()
+    {
+        return await _context.Stories
+            .AsNoTracking()
+            .Where(item => item.PostStatus == ApprovedStatus)
+            .OrderByDescending(item => item.Views)
+            .Take(5)
+            .Select(item => new RankingItemViewModel
+            {
+                StoryId = item.id_Story,
+                StoryName = item.StoryName!,
+                ImageUrl = item.Image,
+                Views = item.Views ?? 0,
+                FavouriteCount = _context.Favourites.Count(f => f.id_Story == item.id_Story)
+            })
+            .ToListAsync();
+    }
+
+    private async Task<List<RankingItemViewModel>> GetTopFavouriteStoriesAsync()
+    {
+        return await _context.Stories
+            .AsNoTracking()
+            .Where(item => item.PostStatus == ApprovedStatus)
+            .OrderByDescending(item => _context.Favourites.Count(f => f.id_Story == item.id_Story))
+            .Take(5)
+            .Select(item => new RankingItemViewModel
+            {
+                StoryId = item.id_Story,
+                StoryName = item.StoryName!,
+                ImageUrl = item.Image,
+                Views = item.Views ?? 0,
+                FavouriteCount = _context.Favourites.Count(f => f.id_Story == item.id_Story)
+            })
+            .ToListAsync();
+    }
+
+    private async Task<List<StoryCardViewModel>> GetLatestUpdatedStoriesAsync()
+    {
+        return await _context.Stories
+            .AsNoTracking()
+            .Where(item => item.PostStatus == ApprovedStatus)
+            .Include(item => item.Author)
+                .ThenInclude(author => author!.User)
+            .Include(item => item.StoryCategories)
+                .ThenInclude(sc => sc.Category)
+            .Include(item => item.Chapters)
+            .OrderByDescending(item => item.Modified_At ?? item.Posted_At)
+            .Take(8)
+            .Select(item => new StoryCardViewModel
+            {
+                StoryId = item.id_Story,
+                StoryName = item.StoryName ?? "Untitled",
+                ImageUrl = item.Image,
+                AuthorName = item.Author!.PenName ?? item.Author.User!.UserName,
+                CategoryName = string.Join(", ",
+                    item.StoryCategories
+                        .Select(sc => sc.Category!.CategoryName)),
+                ChapterCount = item.Chapters.Count,
+                Views = item.Views ?? 0
+            })
+            .ToListAsync();
     }
 }

@@ -29,10 +29,10 @@ public class WriterController : Controller
 
     public async Task<IActionResult> Stories()
     {
-        if (!await HasRegisteredAuthorAsync())
+        var redirect = await EnsureAuthorRegisteredAsync("Vui lòng đăng ký làm tác giả trước khi tạo truyện.");
+        if (redirect is not null)
         {
-            TempData["InfoMessage"] = "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
-            return RedirectToAction(nameof(RegisterAuthor));
+            return redirect;
         }
 
         var currentUserId = HttpContext.Session.GetCurrentUserId()!.Value;
@@ -149,12 +149,10 @@ public class WriterController : Controller
     [HttpGet]
     public async Task<IActionResult> CreateStory()
     {
-        if (!await HasRegisteredAuthorAsync())
+        var redirect = await EnsureAuthorRegisteredAsync("Vui lòng đăng ký làm tác giả trước khi tạo truyện.");
+        if (redirect is not null)
         {
-            TempData["InfoMessage"] =
-                "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
-
-            return RedirectToAction(nameof(RegisterAuthor));
+            return redirect;
         }
 
         return View("StoryForm",
@@ -175,22 +173,13 @@ public class WriterController : Controller
     {
         var model = editor.Form ?? new StoryFormViewModel();
 
-        if (!await HasRegisteredAuthorAsync())
+        var redirect = await EnsureAuthorRegisteredAsync("Please register as an author before creating stories.");
+        if (redirect is not null)
         {
-            TempData["InfoMessage"] =
-                "Please register as an author before creating stories.";
-
-            return RedirectToAction(nameof(RegisterAuthor));
+            return redirect;
         }
 
-        if (!model.IsOriginal && string.IsNullOrWhiteSpace(model.OriginalAuthor))
-        {
-            ModelState.AddModelError("Form.OriginalAuthor", "Vui lòng nhập tên tác giả gốc cho truyện sưu tầm/dịch.");
-        }
-        if (model.IsOriginal)
-        {
-            model.OriginalAuthor = null;
-        }
+        ValidateOriginalAuthor(model);
 
         if (!ModelState.IsValid)
         {
@@ -275,12 +264,10 @@ public class WriterController : Controller
     [HttpGet]
     public async Task<IActionResult> EditStory(int id)
     {
-        if (!await HasRegisteredAuthorAsync())
+        var redirect = await EnsureAuthorRegisteredAsync("Vui lòng đăng ký làm tác giả trước khi tạo truyện.");
+        if (redirect is not null)
         {
-            TempData["InfoMessage"] =
-                "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
-
-            return RedirectToAction(nameof(RegisterAuthor));
+            return redirect;
         }
 
         var story = await GetOwnedStoryAsync(id);
@@ -325,22 +312,13 @@ public class WriterController : Controller
     {
         var model = editor.Form ?? new StoryFormViewModel();
 
-        if (!await HasRegisteredAuthorAsync())
+        var redirect = await EnsureAuthorRegisteredAsync("Vui lòng đăng ký làm tác giả trước khi tạo truyện.");
+        if (redirect is not null)
         {
-            TempData["InfoMessage"] =
-                "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
-
-            return RedirectToAction(nameof(RegisterAuthor));
+            return redirect;
         }
 
-        if (!model.IsOriginal && string.IsNullOrWhiteSpace(model.OriginalAuthor))
-        {
-            ModelState.AddModelError("Form.OriginalAuthor", "Vui lòng nhập tên tác giả gốc cho truyện sưu tầm/dịch.");
-        }
-        if (model.IsOriginal)
-        {
-            model.OriginalAuthor = null;
-        }
+        ValidateOriginalAuthor(model);
 
         if (!ModelState.IsValid)
         {
@@ -429,12 +407,10 @@ public class WriterController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteStory(int id)
     {
-        if (!await HasRegisteredAuthorAsync())
+        var redirect = await EnsureAuthorRegisteredAsync("Vui lòng đăng ký làm tác giả trước khi tạo truyện.");
+        if (redirect is not null)
         {
-            TempData["InfoMessage"] =
-                "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
-
-            return RedirectToAction(nameof(RegisterAuthor));
+            return redirect;
         }
 
         var story = await GetOwnedStoryAsync(id, trackChanges: true);
@@ -444,8 +420,7 @@ public class WriterController : Controller
         }
 
         var readingHistories = await _context.ReadingHistories
-            .Where(item => item.id_Story == story.id_Story ||
-                           (item.id_Story == story.id_Story))
+            .Where(item => item.id_Story == story.id_Story)
             .ToListAsync();
 
         var favourites = await _context.Favourites
@@ -589,12 +564,10 @@ public class WriterController : Controller
     [HttpGet]
     public async Task<IActionResult> CreateChapter(int storyId)
     {
-        if (!await HasRegisteredAuthorAsync())
+        var redirect = await EnsureAuthorRegisteredAsync("Vui lòng đăng ký làm tác giả trước khi tạo truyện.");
+        if (redirect is not null)
         {
-            TempData["InfoMessage"] =
-                "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
-
-            return RedirectToAction(nameof(RegisterAuthor));
+            return redirect;
         }
 
         var story = await GetOwnedStoryAsync(storyId);
@@ -614,12 +587,10 @@ public class WriterController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateChapter(ChapterFormViewModel model)
     {
-        if (!await HasRegisteredAuthorAsync())
+        var redirect = await EnsureAuthorRegisteredAsync("Vui lòng đăng ký làm tác giả trước khi tạo truyện.");
+        if (redirect is not null)
         {
-            TempData["InfoMessage"] =
-                "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
-
-            return RedirectToAction(nameof(RegisterAuthor));
+            return redirect;
         }
 
         var story = await GetOwnedStoryAsync(model.StoryId, trackChanges: true);
@@ -704,12 +675,10 @@ public class WriterController : Controller
     [HttpGet]
     public async Task<IActionResult> EditChapter(int id)
     {
-        if (!await HasRegisteredAuthorAsync())
+        var redirect = await EnsureAuthorRegisteredAsync("Vui lòng đăng ký làm tác giả trước khi tạo truyện.");
+        if (redirect is not null)
         {
-            TempData["InfoMessage"] =
-                "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
-
-            return RedirectToAction(nameof(RegisterAuthor));
+            return redirect;
         }
 
         var chapter = await GetOwnedChapterAsync(id);
@@ -733,12 +702,10 @@ public class WriterController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditChapter(int id, ChapterFormViewModel model)
     {
-        if (!await HasRegisteredAuthorAsync())
+        var redirect = await EnsureAuthorRegisteredAsync("Vui lòng đăng ký làm tác giả trước khi tạo truyện.");
+        if (redirect is not null)
         {
-            TempData["InfoMessage"] =
-                "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
-
-            return RedirectToAction(nameof(RegisterAuthor));
+            return redirect;
         }
 
         var chapter = await GetOwnedChapterAsync(id, trackChanges: true);
@@ -778,12 +745,10 @@ public class WriterController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteChapter(int id)
     {
-        if (!await HasRegisteredAuthorAsync())
+        var redirect = await EnsureAuthorRegisteredAsync("Vui lòng đăng ký làm tác giả trước khi tạo truyện.");
+        if (redirect is not null)
         {
-            TempData["InfoMessage"] =
-                "Vui lòng đăng ký làm tác giả trước khi tạo truyện.";
-
-            return RedirectToAction(nameof(RegisterAuthor));
+            return redirect;
         }
 
         var chapter = await GetOwnedChapterAsync(id, trackChanges: true);
@@ -873,43 +838,59 @@ public class WriterController : Controller
             });
     }
     [HttpGet]
-[HttpGet]
-public async Task<IActionResult> Chapters(int storyId)
-{
-    // 1. Lấy thông tin truyện để đảm bảo người dùng này là chủ sở hữu
-    var story = await GetOwnedStoryAsync(storyId);
-
-    // Nếu không tìm thấy truyện, trả về trang 404
-    if (story is null)
+    public async Task<IActionResult> Chapters(int storyId)
     {
-        return NotFound();
+        var story = await GetOwnedStoryAsync(storyId);
+        if (story is null)
+        {
+            return NotFound();
+        }
+
+        var model = new WriterStoryManageViewModel
+        {
+            StoryId = story.id_Story,
+            StoryName = story.StoryName ?? "Truyện chưa có tên",
+            PostStatus = story.PostStatus,
+            RejectReason = story.Reject_Reason,
+            SelectedCategories = story.StoryCategories
+                .Select(sc => sc.id_Category)
+                .ToList(),
+            Chapters = story.Chapters
+                .OrderByDescending(c => c.ChapterNumber)
+                .Select(c => new StoryChapterListItemViewModel
+                {
+                    ChapterId = c.id_Chapter,
+                    ChapterNumber = c.ChapterNumber,
+                    ChapterName = c.ChapterName ?? string.Empty,
+                    PostedAt = c.Posted_At
+                })
+                .ToList()
+        };
+
+        return View(model);
     }
 
-    // 2. Tạo Model để truyền sang View
-    var model = new WriterStoryManageViewModel
+    private async Task<IActionResult?> EnsureAuthorRegisteredAsync(string message)
     {
-        StoryId = story.id_Story,
-        StoryName = story.StoryName ?? "Truyện chưa có tên",
-        PostStatus = story.PostStatus,
-        RejectReason = story.Reject_Reason,
-        
-        SelectedCategories = story.StoryCategories
-            .Select(sc => sc.id_Category)
-            .ToList(),
+        if (await HasRegisteredAuthorAsync())
+        {
+            return null;
+        }
 
-        Chapters = story.Chapters
-            .OrderByDescending(c => c.ChapterNumber)
-            .Select(c => new StoryChapterListItemViewModel
-            {
-                ChapterId = c.id_Chapter, 
-                ChapterNumber = c.ChapterNumber,
-                ChapterName = c.ChapterName ?? string.Empty,
-                PostedAt = c.Posted_At
-            })
-            .ToList()
-    };
+        TempData["InfoMessage"] = message;
+        return RedirectToAction(nameof(RegisterAuthor));
+    }
 
-    // 3. Truyền model vào View
-    return View(model); 
-}
+    private void ValidateOriginalAuthor(StoryFormViewModel model)
+    {
+        if (!model.IsOriginal && string.IsNullOrWhiteSpace(model.OriginalAuthor))
+        {
+            ModelState.AddModelError("Form.OriginalAuthor", "Vui lòng nhập tên tác giả gốc cho truyện sưu tầm/dịch.");
+        }
+
+        if (model.IsOriginal)
+        {
+            model.OriginalAuthor = null;
+        }
+    }
 }

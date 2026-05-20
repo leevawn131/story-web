@@ -31,14 +31,14 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginViewModel model)
     {
-        model.UserName = (model.UserName ?? string.Empty).Trim();
+        model.UserName = NormalizeInput(model.UserName);
 
         if (!ModelState.IsValid)
         {
             return View(model);
         }
 
-        var normalizedUserName = model.UserName.ToLower();
+        var normalizedUserName = NormalizeKey(model.UserName);
         var user = await _context.Users
             .AsNoTracking()
             .FirstOrDefaultAsync(item => item.UserName.ToLower() == normalizedUserName);
@@ -70,16 +70,16 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
-        model.UserName = (model.UserName ?? string.Empty).Trim();
-        model.Email = (model.Email ?? string.Empty).Trim();
+        model.UserName = NormalizeInput(model.UserName);
+        model.Email = NormalizeInput(model.Email);
 
         if (!ModelState.IsValid)
         {
             return View(model);
         }
 
-        var normalizedUserName = model.UserName.ToLower();
-        var normalizedEmail = model.Email.ToLower();
+        var normalizedUserName = NormalizeKey(model.UserName);
+        var normalizedEmail = NormalizeKey(model.Email);
 
         if (await _context.Users.AnyAsync(item => item.UserName.ToLower() == normalizedUserName))
         {
@@ -173,8 +173,8 @@ public class AccountController : Controller
     [Auth]
     public async Task<IActionResult> UpdateProfile(UpdateProfileInputModel model)
     {
-        model.UserName = (model.UserName ?? string.Empty).Trim();
-        model.Email = (model.Email ?? string.Empty).Trim();
+        model.UserName = NormalizeInput(model.UserName);
+        model.Email = NormalizeInput(model.Email);
         model.PenName = string.IsNullOrWhiteSpace(model.PenName) ? null : model.PenName.Trim();
 
         var user = await GetCurrentUserAsync(trackChanges: true);
@@ -184,12 +184,15 @@ public class AccountController : Controller
             return RedirectToAction(nameof(Login));
         }
 
-        if (await _context.Users.AnyAsync(item => item.id_User != user.id_User && item.UserName.ToLower() == model.UserName.ToLower()))
+        var normalizedUserName = NormalizeKey(model.UserName);
+        var normalizedEmail = NormalizeKey(model.Email);
+
+        if (await _context.Users.AnyAsync(item => item.id_User != user.id_User && item.UserName.ToLower() == normalizedUserName))
         {
             ModelState.AddModelError(nameof(model.UserName), "Tên đăng nhập này đã được sử dụng.");
         }
 
-        if (await _context.Users.AnyAsync(item => item.id_User != user.id_User && item.Email.ToLower() == model.Email.ToLower()))
+        if (await _context.Users.AnyAsync(item => item.id_User != user.id_User && item.Email.ToLower() == normalizedEmail))
         {
             ModelState.AddModelError(nameof(model.Email), "Email này đã được sử dụng.");
         }
@@ -390,5 +393,15 @@ public class AccountController : Controller
         }
 
         return RedirectToAction(nameof(Profile));
+    }
+
+    private static string NormalizeInput(string? value)
+    {
+        return (value ?? string.Empty).Trim();
+    }
+
+    private static string NormalizeKey(string? value)
+    {
+        return NormalizeInput(value).ToLower();
     }
 }

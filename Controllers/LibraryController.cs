@@ -24,7 +24,7 @@ public class LibraryController : Controller
 
     public async Task<IActionResult> History()
     {
-        var currentUserId = HttpContext.Session.GetCurrentUserId()!.Value;
+        var currentUserId = GetCurrentUserId();
 
         var items = await _context.ReadingHistories
             .AsNoTracking()
@@ -55,7 +55,7 @@ public class LibraryController : Controller
 
     public async Task<IActionResult> Favorites()
     {
-        var currentUserId = HttpContext.Session.GetCurrentUserId()!.Value;
+        var currentUserId = GetCurrentUserId();
 
         var items = await _context.Favourites
             .AsNoTracking()
@@ -82,7 +82,7 @@ public class LibraryController : Controller
 
     public async Task<IActionResult> Notifications()
     {
-        var currentUserId = HttpContext.Session.GetCurrentUserId()!.Value;
+        var currentUserId = GetCurrentUserId();
 
         var items = await _context.Notifications
             .AsNoTracking()
@@ -107,7 +107,7 @@ public class LibraryController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> MarkNotificationRead(int id, string? returnUrl = null)
     {
-        var currentUserId = HttpContext.Session.GetCurrentUserId()!.Value;
+        var currentUserId = GetCurrentUserId();
         var notification = await _context.Notifications
             .FirstOrDefaultAsync(item => item.id_Noti == id && item.id_User == currentUserId);
 
@@ -123,5 +123,10 @@ public class LibraryController : Controller
         }
 
         return RedirectToAction(nameof(Notifications));
+    }
+
+    private int GetCurrentUserId()
+    {
+        return HttpContext.Session.GetCurrentUserId()!.Value;
     }
 }
