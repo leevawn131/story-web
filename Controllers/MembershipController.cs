@@ -29,10 +29,8 @@ namespace story_web.Controllers
             return View(plans);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
         [Auth]
-        public async Task<IActionResult> Buy(int id)
+        public async Task<IActionResult> Checkout(int id)
         {
             var userId = HttpContext.Session.GetCurrentUserId();
             if (!userId.HasValue)
@@ -46,38 +44,76 @@ namespace story_web.Controllers
                 return NotFound();
             }
 
-            // Check if user already has an active membership, maybe just extend it,
-            // but for simplicity, we'll create a new record or update the existing active one.
-            var existingMembership = await _context.UserMemberships
-                .Where(m => m.id_User == userId.Value && m.EndDate > DateTime.Now)
-                .OrderByDescending(m => m.EndDate)
-                .FirstOrDefaultAsync();
+            return View(plan);
+        }
 
-            if (existingMembership != null)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Auth]
+        public async Task<IActionResult> ProcessPayment(int id, string paymentMethod, string status)
+        {
+            var userId = HttpContext.Session.GetCurrentUserId();
+            if (!userId.HasValue)
             {
-                // Extend the existing one
-                existingMembership.EndDate = existingMembership.EndDate.AddDays(plan.Duration);
-                existingMembership.id_Membership = plan.id_Membership;
-                _context.UserMemberships.Update(existingMembership);
+                return RedirectToAction("Login", "Account");
+            }
+
+            var plan = await _context.Memberships.FindAsync(id);
+            if (plan == null)
+            {
+                return NotFound();
+            }
+
+            // Tạo bản ghi Payment
+            var payment = new Payment
+            {
+                id_User = userId.Value,
+                id_Membership = plan.id_Membership,
+                Amount = plan.Price,
+                PaymentMethod = paymentMethod,
+                Status = status, // "success" hoặc "failed"
+                Created_At = DateTime.Now
+            };
+            _context.Payments.Add(payment);
+
+            if (status == "success")
+            {
+                // Kiểm tra xem user đã có gói hội viên còn hạn hay không
+                var existingMembership = await _context.UserMemberships
+                    .Where(m => m.id_User == userId.Value && m.EndDate > DateTime.Now)
+                    .OrderByDescending(m => m.EndDate)
+                    .FirstOrDefaultAsync();
+
+                if (existingMembership != null)
+                {
+                    // Cộng dồn hạn dùng
+                    existingMembership.EndDate = existingMembership.EndDate.AddDays(plan.Duration);
+                    existingMembership.id_Membership = plan.id_Membership;
+                    _context.UserMemberships.Update(existingMembership);
+                }
+                else
+                {
+                    // Tạo đăng ký mới
+                    var newMembership = new UserMembership
+                    {
+                        id_User = userId.Value,
+                        id_Membership = plan.id_Membership,
+                        StartDate = DateTime.Now,
+                        EndDate = DateTime.Now.AddDays(plan.Duration),
+                        Status = "Active"
+                    };
+                    _context.UserMemberships.Add(newMembership);
+                }
+
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = $"Thanh toán thành công! Bạn đã đăng ký/gia hạn thành công gói {plan.Name} ({plan.Duration} ngày).";
             }
             else
             {
-                // Create a new one
-                var newMembership = new UserMembership
-                {
-                    id_User = userId.Value,
-                    id_Membership = plan.id_Membership,
-                    StartDate = DateTime.Now,
-                    EndDate = DateTime.Now.AddDays(plan.Duration),
-                    Status = "Active"
-                };
-                _context.UserMemberships.Add(newMembership);
+                await _context.SaveChangesAsync();
+                TempData["ErrorMessage"] = $"Thanh toán thất bại! Giao dịch mua gói {plan.Name} không thành công.";
             }
 
-            await _context.SaveChangesAsync();
-
-            TempData["SuccessMessage"] = $"Bạn đã đăng ký thành công gói {plan.Name}. Bây giờ bạn có thể trải nghiệm tính năng Nghe Audio!";
-            
             return RedirectToAction("Index");
         }
     }
