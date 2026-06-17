@@ -173,7 +173,7 @@ public class WriterController : Controller
     {
         var model = editor.Form ?? new StoryFormViewModel();
 
-        var redirect = await EnsureAuthorRegisteredAsync("Please register as an author before creating stories.");
+        var redirect = await EnsureAuthorRegisteredAsync("Vui lòng đăng ký làm tác giả trước khi tạo truyện.");
         if (redirect is not null)
         {
             return redirect;
@@ -448,10 +448,7 @@ public class WriterController : Controller
         return RedirectToAction(nameof(Stories));
     }
 
-    private async Task<WriterStoryEditorViewModel>
-        BuildStoryEditorAsync(
-            string title,
-            StoryFormViewModel form)
+    private async Task<WriterStoryEditorViewModel>BuildStoryEditorAsync(string title, StoryFormViewModel form)
     {
         return new WriterStoryEditorViewModel
         {
@@ -463,8 +460,7 @@ public class WriterController : Controller
         };
     }
 
-    private async Task<IReadOnlyList<CategoryLinkViewModel>>
-        GetCategoriesAsync()
+    private async Task<IReadOnlyList<CategoryLinkViewModel>> GetCategoriesAsync()
     {
         return await _context.Categories
             .AsNoTracking()
@@ -498,9 +494,7 @@ public class WriterController : Controller
                 item.id_User == currentUserId);
     }
 
-    private async Task<Story?> GetOwnedStoryAsync(
-        int storyId,
-        bool trackChanges = false)
+    private async Task<Story?> GetOwnedStoryAsync(int storyId, bool trackChanges = false)
     {
         var currentUserId =
             HttpContext.Session.GetCurrentUserId()!.Value;
@@ -626,8 +620,7 @@ public class WriterController : Controller
 
         AddNotification(HttpContext.Session.GetCurrentUserId()!.Value, $"Chương \"{chapter.ChapterName}\" đã được thêm vào \"{story.StoryName}\".");
         await _context.SaveChangesAsync();
-
-        // Notify users who favourited this story (use existing Favourites table).
+        // Thông báo cho người dùng ai đã thêm vào yêu thích truyện này
         try
         {
             int? currentUserId = HttpContext.Session.GetCurrentUserId();
@@ -640,7 +633,6 @@ public class WriterController : Controller
 
             foreach (var favUserId in favouriteUserIds)
             {
-                // don't notify the actor who created the chapter
                 if (currentUserId.HasValue && favUserId == currentUserId.Value)
                 {
                     continue;

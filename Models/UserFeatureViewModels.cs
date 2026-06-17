@@ -192,13 +192,12 @@ public class StoryFormViewModel
     public List<int> SelectedCategories { get; set; } = new();
 
     public string? StoryStatus { get; set; }
-    [Display(Name = "Bộ chữ truyện")]
+    [Display(Name = "Ảnh bìa truyện")]
     [DataType(DataType.Upload)]
     public IFormFile? ImageFile { get; set; }
 
     public string? CurrentImage { get; set; }
 
-    [Display(Name = "Tóm tắt truyện (hiển thị trên trang chủ)")]
     [Required]
     [StringLength(4000, MinimumLength = 20)]
     public string? Description { get; set; }

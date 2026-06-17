@@ -203,7 +203,6 @@ public class HomeController : Controller
             HasMembership = hasMembership
         };
 
-
         return View(model);
     }
     [HttpPost]
